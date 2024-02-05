@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Button } from '@src/components';
-import { ExploreProps } from './Explore.type';
-import { useScrollToTop } from '@react-navigation/native';
-import MillicastWidgetPublisher from './MillicastWidgetPublisher';
-import MillicastWidgetViewer from './MillicastWidgetViewer';
-import axios from 'axios';
-import { generateRandomString } from '@src/utils/random-string';
+import React, { useState } from "react";
+import { Box, Button } from "@src/components";
+import { ExploreProps } from "./Explore.type";
+import { useScrollToTop } from "@react-navigation/native";
+import MillicastWidgetPublisher from "./MillicastWidgetPublisher";
+import MillicastWidgetViewer from "./MillicastWidgetViewer";
+import axios from "axios";
+import { generateRandomString } from "@src/utils/random-string";
 
 export const Explore: React.FC<ExploreProps> = ({}) => {
   const ref = React.useRef(null);
@@ -15,21 +15,12 @@ export const Explore: React.FC<ExploreProps> = ({}) => {
   }>();
   useScrollToTop(ref);
   const startStream = async () => {
-    console.log(
-      '******  ******',
-      `http://192.168.1.2:5000/api/dolby/token/${generateRandomString(
-        10,
-      )}/${generateRandomString(10)}`,
-    );
-
     const dolby = await axios.get(
-      `http://192.168.1.2:5000/api/dolby/token/${generateRandomString(
-        10,
-      )}/${generateRandomString(10)}`,
+      `https://appraisal-hub.onrender.com/api/dolby/token/${generateRandomString(
+        10
+      )}/${generateRandomString(10)}`
     );
 
-    console.log('****** tok ******', dolby.data.data.token);
-    console.log('****** tok ******', dolby.data.data.streams[0].streamName);
     setDoldyData({
       streamName: dolby.data.data.streams[0].streamName,
       token: dolby.data.data.token,
@@ -37,10 +28,13 @@ export const Explore: React.FC<ExploreProps> = ({}) => {
   };
 
   const sendDolyData = async () => {
-    await axios.post('http://192.168.1.2:5000/api/conversation/create', {
-      streamName: dolbyData?.streamName,
-      accountId: 'JZac6x',
-    });
+    await axios.post(
+      "https://appraisal-hub.onrender.com/api/conversation/create",
+      {
+        streamName: dolbyData?.streamName,
+        accountId: "JZac6x",
+      }
+    );
   };
 
   return (
