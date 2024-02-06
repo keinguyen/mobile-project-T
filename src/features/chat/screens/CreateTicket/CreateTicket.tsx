@@ -1,20 +1,28 @@
-import { Box, Button, TextField } from '@src/components';
-import { TicketStackParamList } from '@src/features/chat';
-import streamChatServices from '@src/features/chat/services/stream-chat.services';
-import { ScreenProps } from '@src/navigation/types';
-import { actions } from '@src/store/redux';
-import React from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { Keyboard, ScrollView } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { requestAPI } from "@src/apis/requestAPI";
+import { View, Button, TextField } from "@src/components";
+import { TicketStackParamList } from "@src/features/chat";
+import streamChatServices from "@src/features/chat/services/stream-chat.services";
+import { Ticket, TicketStatus } from "@src/features/chat/type";
+import { ScreenProps } from "@src/navigation/types";
+import { actions } from "@src/store/redux";
+import React from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Keyboard, ScrollView } from "react-native";
+import { useDispatch } from "react-redux";
 
 interface FormValues {
   title: string;
   descriptions: string;
+  price: string;
+  patientInfo: {
+    fisrtName: string;
+    lastName: string;
+    phoneNumber: string;
+  };
 }
 
 export const CreateTicket: React.FC<
-  ScreenProps<TicketStackParamList, 'CreateTicket'>
+  ScreenProps<TicketStackParamList, "CreateTicket">
 > = ({ navigation }) => {
   const dispatch = useDispatch();
   const {
@@ -23,77 +31,199 @@ export const CreateTicket: React.FC<
     formState: { isValid },
   } = useForm<FormValues>({
     defaultValues: {
+      // title: "Honda SH150i",
+      // descriptions: "Like new",
+      // patientInfo: {
+      //   fisrtName: "Nguyen",
+      //   lastName: "Van B",
+      //   phoneNumber: "0355732994",
+      // },
+      // price: "50000000",
       title: undefined,
       descriptions: undefined,
+      patientInfo: {
+        fisrtName: undefined,
+        lastName: undefined,
+        phoneNumber: undefined,
+      },
+      price: undefined,
     },
   });
 
-  const onSetupPassphrase: SubmitHandler<FormValues> = async ({
-    descriptions,
-    title,
-  }) => {
-    if (!isValid) {
-      return;
-    }
-
+  const onSetupPassphrase: SubmitHandler<FormValues> = async (values) => {
     Keyboard.dismiss();
-    console.log(descriptions, title);
-    const channelId = (Math.random() + 1).toString(36).substring(7);
-    const id = await streamChatServices.createChannel(title, channelId);
-    if (id) {
-      dispatch(actions.ticket.upsertTicket({ id, desc: descriptions, title }));
-      navigation.goBack();
+    try {
+      if (!isValid) {
+        return;
+      }
+
+      const { title, price, patientInfo, descriptions } = values;
+      const channelId = (Math.random() + 1).toString(36).substring(7);
+      const id = await streamChatServices.createChannel(title, channelId);
+      if (id && channelId === id) {
+        const data: Ticket = {
+          title,
+          channelId,
+          patientInfo,
+          desc: descriptions,
+          createBy: "Stack 1",
+          price: Number(price),
+          status: TicketStatus.WAITING,
+        };
+
+        await requestAPI<Ticket>({
+          subject: "tickets.api.createTicket",
+          body: data,
+        });
+
+        dispatch(actions.ticket.upsertTicket(data));
+        navigation.goBack();
+      }
+    } catch (error) {
+      console.log("Erorr: ", error);
     }
   };
 
   return (
-    <Box flex={1} p="m" pb="l">
+    <View flex={1} px={16} pt={16} pb={32}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Box>
-              <TextField
-                inputProps={{
-                  value: value,
-                  onBlur: onBlur,
-                  onChangeText: onChange,
-                  placeholder: 'Tiêu đề',
-                  keyboardType: 'default',
-                  autoFocus: true,
-                }}
-              />
-            </Box>
-          )}
-          name="title"
-        />
-        <Box py="m">
+        keyboardShouldPersistTaps="handled"
+      >
+        <View pb={16}>
           <Controller
             control={control}
             rules={{
               required: true,
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <Box>
+              <View>
                 <TextField
                   inputProps={{
                     value: value,
                     onBlur: onBlur,
                     onChangeText: onChange,
-                    placeholder: 'Chi tiết',
-                    keyboardType: 'default',
+                    placeholder: "Tiêu đề",
+                    keyboardType: "default",
+                    autoFocus: true,
                   }}
                 />
-              </Box>
+              </View>
+            )}
+            name="title"
+          />
+        </View>
+        <View pb={16}>
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View>
+                <TextField
+                  inputProps={{
+                    value: value,
+                    onBlur: onBlur,
+                    onChangeText: onChange,
+                    placeholder: "Chi tiết",
+                    keyboardType: "default",
+                  }}
+                />
+              </View>
             )}
             name="descriptions"
           />
-        </Box>
+        </View>
+        <View flex={1} pb={16} flexDirection="row">
+          <View flex={1}>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <TextField
+                    inputProps={{
+                      value: value,
+                      onBlur: onBlur,
+                      onChangeText: onChange,
+                      placeholder: "Fisrt name",
+                      keyboardType: "default",
+                    }}
+                  />
+                </View>
+              )}
+              name="patientInfo.fisrtName"
+            />
+          </View>
+          <View w={16} />
+          <View flex={1}>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <TextField
+                    inputProps={{
+                      value: value,
+                      onBlur: onBlur,
+                      onChangeText: onChange,
+                      placeholder: "Last name",
+                      keyboardType: "default",
+                    }}
+                  />
+                </View>
+              )}
+              name="patientInfo.lastName"
+            />
+          </View>
+        </View>
+        <View flex={1} pb={16}>
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View>
+                <TextField
+                  inputProps={{
+                    value: value,
+                    onBlur: onBlur,
+                    onChangeText: onChange,
+                    placeholder: "Phone number",
+                    keyboardType: "numeric",
+                  }}
+                />
+              </View>
+            )}
+            name="patientInfo.phoneNumber"
+          />
+        </View>
+        <View>
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextField
+                inputProps={{
+                  value: value,
+                  onBlur: onBlur,
+                  onChangeText: onChange,
+                  placeholder: "Price",
+                  keyboardType: "numeric",
+                }}
+              />
+            )}
+            name="price"
+          />
+        </View>
       </ScrollView>
       <Button
         label="Create"
@@ -102,6 +232,6 @@ export const CreateTicket: React.FC<
         isFullWidth
         onPress={handleSubmit(onSetupPassphrase)}
       />
-    </Box>
+    </View>
   );
 };

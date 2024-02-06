@@ -1,15 +1,16 @@
+import { createNavigationContainerRef } from "@react-navigation/native";
 import {
   Channel,
   ChannelChat,
   CreateTicket,
   TicketDetail,
-} from '@src/features/chat';
+} from "@src/features/chat";
 
 export const screens = {
-  TicketList: 'TicketList',
-  TicketDetail: 'TicketDetail',
-  CreateTicket: 'CreateTicket',
-  ChannelChat: 'ChannelChat',
+  TicketList: "TicketList",
+  TicketDetail: "TicketDetail",
+  CreateTicket: "CreateTicket",
+  ChannelChat: "ChannelChat",
 } as const;
 
 export const TicketRouter = {
