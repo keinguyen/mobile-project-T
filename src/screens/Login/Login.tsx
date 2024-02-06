@@ -4,6 +4,8 @@ import { AuthContext } from "@src/auth";
 import { AuthStackParamList, ScreenProps } from "@src/navigation/types";
 import { AuthenticationLayout, Button, TextField } from "@src/components";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { actions } from "@src/store/redux";
 
 export const Login: React.FC<ScreenProps<AuthStackParamList, "Login">> = ({
   navigation,
@@ -13,6 +15,7 @@ export const Login: React.FC<ScreenProps<AuthStackParamList, "Login">> = ({
   const [password, setPassword] = React.useState("");
   const { username } = route.params;
   const [isLoading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const onPasswordFieldChange = (value: string) => {
     setPassword(value);
@@ -31,6 +34,12 @@ export const Login: React.FC<ScreenProps<AuthStackParamList, "Login">> = ({
       );
 
       if (res?.data?.accessToken) {
+        dispatch(
+          actions.app.updateProfile({
+            username,
+            accessToken: res?.data?.accessToken,
+          })
+        );
         signIn(username, res?.data?.accessToken);
       } else {
         throw "";

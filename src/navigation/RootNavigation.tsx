@@ -20,6 +20,7 @@ import { AuthenticationStack } from "./Stacks";
 import TabNavigation from "./TabNavigation";
 import { RootStackParamList } from "./types";
 import { TicketRouter } from "@src/features/chat";
+import { useSelector } from "react-redux";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -60,9 +61,11 @@ function RootNavigator(): JSX.Element {
     title: " ",
   };
 
-  const { userToken } = useContext(AuthContext);
+  const userProfile = useSelector((state) => {
+    return state.app.userProfile;
+  });
   const stacks = useMemo(() => {
-    if (userToken) {
+    if (userProfile.username) {
       return {
         ["MainStacks"]: {
           screen: TabNavigation,
@@ -89,7 +92,7 @@ function RootNavigator(): JSX.Element {
         options: { headerShown: false },
       },
     };
-  }, [userToken]);
+  }, [userProfile.username]);
 
   return (
     <RootStack.Navigator screenOptions={rootOptions}>
