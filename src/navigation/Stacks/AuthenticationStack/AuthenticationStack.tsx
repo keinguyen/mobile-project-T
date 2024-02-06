@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '@src/navigation/types';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "@src/navigation/types";
 import {
   Authentication,
   AuthenticationCodeVerification,
   AuthenticationWithPhone,
   ForgotPassword,
   Login,
-} from '@src/screens';
-import { useTransparentHeaderOptions } from '@src/utils';
+} from "@src/screens";
+import { useTransparentHeaderOptions } from "@src/utils";
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -18,10 +18,11 @@ export const AuthenticationStack = () => {
   return (
     <>
       <Stack.Navigator
-        initialRouteName="Authentication"
+        initialRouteName="AuthenticationWithPhone"
         screenOptions={{
           headerShown: false,
-        }}>
+        }}
+      >
         <Stack.Screen name="Authentication" component={Authentication} />
         <Stack.Screen
           name="AuthenticationWithPhone"

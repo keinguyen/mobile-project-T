@@ -1,25 +1,25 @@
-import { PortalHost } from '@gorhom/portal';
-import { NavigationContainer } from '@react-navigation/native';
+import { PortalHost } from "@gorhom/portal";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
-} from '@react-navigation/native-stack';
-import { AuthContext } from '@src/auth';
-import { ChatStreamProvider } from '@src/features/chat';
-import { DishDetails, SearchDishes } from '@src/screens';
+} from "@react-navigation/native-stack";
+import { AuthContext } from "@src/auth";
+import { ChatStreamProvider } from "@src/features/chat";
+import { DishDetails, SearchDishes } from "@src/screens";
 import {
   ThemeContext,
   darkTheme,
   theme as defaultTheme,
   getNavigationTheme,
-} from '@src/theme';
-import React, { useContext, useMemo } from 'react';
-import { Platform, StatusBar } from 'react-native';
-import 'react-native-gesture-handler';
-import { AuthenticationStack } from './Stacks';
-import TabNavigation from './TabNavigation';
-import { RootStackParamList } from './types';
-import { TicketRouter } from '@src/features/chat';
+} from "@src/theme";
+import React, { useContext, useMemo } from "react";
+import { Platform, StatusBar } from "react-native";
+import "react-native-gesture-handler";
+import { AuthenticationStack } from "./Stacks";
+import TabNavigation from "./TabNavigation";
+import { RootStackParamList } from "./types";
+import { TicketRouter } from "@src/features/chat";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -35,11 +35,11 @@ export const RootNavigation = () => {
       <NavigationContainer theme={navigationTheme}>
         <StatusBar
           backgroundColor={
-            theme === 'light'
+            theme === "light"
               ? defaultTheme.colors.background
               : darkTheme.colors.background
           }
-          barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+          barStyle={theme === "light" ? "dark-content" : "light-content"}
         />
         <ChatStreamProvider>
           <RootNavigator />
@@ -53,19 +53,21 @@ export const RootNavigation = () => {
 function RootNavigator(): JSX.Element {
   const rootOptions: NativeStackNavigationOptions = {
     headerBackTitleVisible: false,
-    animation: Platform.select({ ios: 'default', android: 'slide_from_right' }),
-    animationTypeForReplace: 'push',
-    headerTitleAlign: 'center',
+    animation: Platform.select({ ios: "default", android: "slide_from_right" }),
+    animationTypeForReplace: "push",
+    headerTitleAlign: "center",
     // presentation: 'modal',
-    title: ' ',
+    title: " ",
   };
 
   const { userToken } = useContext(AuthContext);
 
+  console.log("****** userToken ******", userToken);
+
   const stacks = useMemo(() => {
     if (userToken) {
       return {
-        ['MainStacks']: {
+        ["MainStacks"]: {
           screen: TabNavigation,
           options: { headerShown: false },
         },
@@ -73,19 +75,19 @@ function RootNavigator(): JSX.Element {
       };
     }
     return {
-      ['AuthenticationStacks']: {
+      ["AuthenticationStacks"]: {
         screen: AuthenticationStack,
         options: { headerShown: false },
       },
-      ['DishDetailsModal']: {
+      ["DishDetailsModal"]: {
         screen: DishDetails,
         options: {
           headerTransparent: true,
-          title: '',
+          title: "",
           headerBackTitleVisible: false,
         },
       },
-      ['SearchDishesModal']: {
+      ["SearchDishesModal"]: {
         screen: SearchDishes,
         options: { headerShown: false },
       },
