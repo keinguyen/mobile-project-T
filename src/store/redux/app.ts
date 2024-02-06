@@ -1,16 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { extraActions } from '@src/store/redux/utils/createExtraReducers';
+import { createSlice } from "@reduxjs/toolkit";
+import { extraActions } from "@src/store/redux/utils/createExtraReducers";
 
-export interface CounterState {
+export interface AppState {
   value: number;
+  userProfile: {
+    username: string;
+    accessToken: string;
+  };
 }
 
-const initialState: CounterState = {
+const initialState: AppState = {
   value: 0,
+  userProfile: {
+    accessToken: "",
+    username: "",
+  },
 };
 
 export const app = createSlice({
-  name: 'counters',
+  name: "app",
   initialState,
   reducers: {
     increment: (state) => {
@@ -18,6 +26,9 @@ export const app = createSlice({
     },
     decrement: (state) => {
       state.value -= 1;
+    },
+    updateProfile: (state, action) => {
+      state.userProfile = action.payload;
     },
   },
   extraReducers: (builder) => {
