@@ -61,9 +61,6 @@ function RootNavigator(): JSX.Element {
   };
 
   const { userToken } = useContext(AuthContext);
-
-  console.log("****** userToken ******", userToken);
-
   const stacks = useMemo(() => {
     if (userToken) {
       return {
