@@ -21,6 +21,8 @@ import TabNavigation from "./TabNavigation";
 import { RootStackParamList } from "./types";
 import { TicketRouter } from "@src/features/chat";
 import { useSelector } from "react-redux";
+import { useInitializeApp } from "@src/hooks/useInitApp";
+import useNotification from "@src/hooks/useNotification";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -64,6 +66,7 @@ function RootNavigator(): JSX.Element {
   const userProfile = useSelector((state) => {
     return state.app.userProfile;
   });
+
   const stacks = useMemo(() => {
     if (userProfile.username) {
       return {
@@ -93,6 +96,9 @@ function RootNavigator(): JSX.Element {
       },
     };
   }, [userProfile.username]);
+
+  useInitializeApp(!!userProfile);
+  useNotification();
 
   return (
     <RootStack.Navigator screenOptions={rootOptions}>
