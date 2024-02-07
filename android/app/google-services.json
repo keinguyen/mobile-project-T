@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "813582160672",
+    "project_id": "appraisehub-hub",
+    "storage_bucket": "appraisehub-hub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813582160672:android:251fa590eb859b008ebd45",
+        "android_client_info": {
+          "package_name": "com.appraisehub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP_TCl3Vvx3R2iJhqUahTrCB3yjON9b2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

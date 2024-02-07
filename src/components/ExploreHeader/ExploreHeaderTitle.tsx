@@ -11,7 +11,7 @@ export const ExploreHeaderTitle = () => {
 
   return (
     <Box flexDirection="row" alignItems="flex-start">
-      <Icon name="sunny" color="orange" size={25} />
+      {/* <Icon name="sunny" color="orange" size={25} /> */}
       <Text marginLeft="s" variant={"header"} color={"primary"}>
         Chào {userProfile.username}
       </Text>

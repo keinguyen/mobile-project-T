@@ -1,9 +1,9 @@
-import React from 'react';
-import { StorybookDecoratorProps } from './StorybookDecorator.type';
-import { ThemeContext, fontSize } from '@src/theme';
-import { Icon, Text, Box } from '../elements';
-import { ScrollView } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import React from "react";
+import { StorybookDecoratorProps } from "./StorybookDecorator.type";
+import { ThemeContext, fontSize } from "@src/theme";
+import { Icon, Text, Box } from "../elements";
+import { ScrollView } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
 export const StorybookDecorator: React.FC<StorybookDecoratorProps> = ({
   children,
@@ -12,10 +12,10 @@ export const StorybookDecorator: React.FC<StorybookDecoratorProps> = ({
   const { setTheme, theme } = React.useContext(ThemeContext);
 
   const onThemeIconPress = () => {
-    if (theme === 'dark') {
-      setTheme('light');
+    if (theme === "dark") {
+      setTheme("light");
     } else {
-      setTheme('dark');
+      setTheme("dark");
     }
   };
 
@@ -26,13 +26,14 @@ export const StorybookDecorator: React.FC<StorybookDecoratorProps> = ({
         flexDirection="row"
         justifyContent="space-between"
         alignItems="center"
-        padding="m">
+        padding="m"
+      >
         <Text variant="subHeader">Documentation</Text>
-        <Icon
+        {/* <Icon
           name={theme === 'dark' ? 'sunny' : 'moon'}
           size={fontSize.xl}
           onPress={onThemeIconPress}
-        />
+        /> */}
       </Box>
       <Box flex={1} padding="m">
         {children}
