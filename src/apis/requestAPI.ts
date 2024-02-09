@@ -3,29 +3,40 @@ import apiErrorService from "@src/apis/api-error";
 const subjectKey = {
   "tickets.api.getList": "GET",
   "tickets.api.createTicket": "POST",
+  "tickets.api.google": "POST",
 };
 
 export const requestAPI = async <T>(params: {
   body?: T;
+  isUploadFile?: boolean;
   subject: keyof typeof subjectKey;
-}): Promise<T> => {
-  const { body, subject } = params;
+}) => {
+  const { body, subject, isUploadFile } = params;
 
   const result = await fetch(
     new URL(
       `.netlify/functions/${subject.split(".")[0]}`,
-      "http://192.168.1.9:9999/"
+      "http://192.168.1.11:9999/"
     ),
     {
       mode: "cors",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body
+        ? isUploadFile
+          ? (body as unknown as Blob)
+          : JSON.stringify(body)
+        : undefined,
       method: subjectKey[subject],
-      headers: { subject, "Content-Type": "application/json" },
+      headers: {
+        subject,
+        "Content-Type": isUploadFile
+          ? "multipart/form-data"
+          : "application/json",
+      },
     }
   )
     .then((e) => e.json())
     .catch((error) => apiErrorService.handleError(error, subject));
 
   console.log(`End request ${subject}`);
-  return result.data;
+  return result;
 };

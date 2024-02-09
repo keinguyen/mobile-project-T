@@ -1,13 +1,14 @@
 import { requestAPI } from "@src/apis/requestAPI";
-import { View, Button, TextField } from "@src/components";
+import { Button, TextField, View } from "@src/components";
 import { TicketStackParamList } from "@src/features/chat";
 import streamChatServices from "@src/features/chat/services/stream-chat.services";
+import { FileService } from "@src/features/chat/services/upload-file.services";
 import { Ticket, TicketStatus } from "@src/features/chat/type";
 import { ScreenProps } from "@src/navigation/types";
 import { actions } from "@src/store/redux";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Keyboard, ScrollView } from "react-native";
+import { Image, Keyboard, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 
 interface FormValues {
@@ -25,6 +26,7 @@ export const CreateTicket: React.FC<
   ScreenProps<TicketStackParamList, "CreateTicket">
 > = ({ navigation }) => {
   const dispatch = useDispatch();
+  const formData = useRef<FormData>();
   const {
     control,
     handleSubmit,
@@ -50,14 +52,20 @@ export const CreateTicket: React.FC<
     },
   });
 
+  useEffect(() => {
+    formData.current = new FormData();
+  }, []);
+
   const onSetupPassphrase: SubmitHandler<FormValues> = async (values) => {
     Keyboard.dismiss();
+
     try {
       if (!isValid) {
         return;
       }
 
       const { title, price, patientInfo, descriptions } = values;
+
       const channelId = (Math.random() + 1).toString(36).substring(7);
       const id = await streamChatServices.createChannel(title, channelId);
       if (id && channelId === id) {
@@ -71,13 +79,23 @@ export const CreateTicket: React.FC<
           status: TicketStatus.WAITING,
         };
 
-        await requestAPI<Ticket>({
+        const ticketId = await requestAPI<Ticket>({
           subject: "tickets.api.createTicket",
           body: data,
         });
 
-        dispatch(actions.ticket.upsertTicket(data));
-        navigation.goBack();
+        if (ticketId) {
+          formData.current?.append("ticketId", ticketId);
+
+          await requestAPI<FormData>({
+            subject: "tickets.api.google",
+            body: formData.current,
+            isUploadFile: true,
+          });
+
+          dispatch(actions.ticket.upsertTicket(data));
+          navigation.goBack();
+        }
       }
     } catch (error) {
       console.log("Erorr: ", error);
@@ -224,6 +242,17 @@ export const CreateTicket: React.FC<
             name="price"
           />
         </View>
+
+        <Button
+          label="Upload file"
+          variant="success"
+          marginTop="s"
+          isFullWidth
+          onPress={async () => {
+            const res = await FileService.launchImageLibrary();
+            res && formData.current?.append("file", res);
+          }}
+        />
       </ScrollView>
       <Button
         label="Create"
