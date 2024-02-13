@@ -2,17 +2,17 @@ import {
   createEntityAdapter,
   createSlice,
   PayloadAction,
-} from '@reduxjs/toolkit';
-import { EStoreKey } from '@src/features/chat/redux/storeKey';
-import { Ticket } from '@src/features/chat/type';
-import { extraActions } from '@src/store/redux/utils/createExtraReducers';
+} from "@reduxjs/toolkit";
+import { EStoreKey } from "@src/features/chat/redux/storeKey";
+import { Ticket } from "@src/features/chat/type";
+import { extraActions } from "@src/store/redux/utils/createExtraReducers";
 
 interface TicketReducer {
   tickets: typeof ticketsInitialState;
 }
 
 const ticketAdapter = createEntityAdapter({
-  selectId: (ticket: Ticket) => ticket.id,
+  selectId: (ticket: Ticket) => ticket.channelId,
   sortComparer: (a, b) => a.title.localeCompare(b.title),
 });
 const ticketsInitialState = ticketAdapter.getInitialState();
@@ -41,7 +41,7 @@ const { name, actions, reducer } = createSlice({
 type State = { [name: string]: TicketReducer };
 
 const ticketSelectors = ticketAdapter.getSelectors(
-  (state: State) => state[name].tickets,
+  (state: State) => state[name].tickets
 );
 
 const selectors = {
