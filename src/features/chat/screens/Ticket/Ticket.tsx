@@ -24,7 +24,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
       const result = await requestAPI<Array<Ticket>>({
         subject: "tickets.api.getList",
       });
-      dispatch(actions.ticket.setAllTickets(result.data));
+      dispatch(actions.ticket.setAllTickets(result));
     },
     {
       onError: (error) => {
