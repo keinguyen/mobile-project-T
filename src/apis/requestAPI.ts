@@ -16,7 +16,7 @@ export const requestAPI = async <T>(params: {
   const result = await fetch(
     new URL(
       `.netlify/functions/${subject.split(".")[0]}`,
-      "http://192.168.1.11:9999/"
+      "http://localhost:8888/"
     ),
     {
       mode: "cors",

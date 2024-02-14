@@ -6,7 +6,6 @@ import {
   Authentication,
   AuthenticationCodeVerification,
   AuthenticationWithPhone,
-  ForgotPassword,
   Login,
 } from "@src/screens";
 import { useTransparentHeaderOptions } from "@src/utils";
@@ -37,11 +36,6 @@ export const AuthenticationStack = () => {
         <Stack.Screen
           name="Login"
           component={Login}
-          options={transparentHeaderOptions}
-        />
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPassword}
           options={transparentHeaderOptions}
         />
       </Stack.Navigator>

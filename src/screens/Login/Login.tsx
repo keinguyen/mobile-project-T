@@ -52,7 +52,7 @@ export const Login: React.FC<ScreenProps<AuthStackParamList, "Login">> = ({
   };
 
   const onForgotPassword = () => {
-    Alert.alert("Lỗi", "Vui lòng liên hệ nhân viên IT!");
+    Alert.alert("Lỗi", "Vui lòng liên hệ nhân viên IT\nHotline: 0973330980");
   };
 
   return (

@@ -60,7 +60,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           },
         });
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: () => {
+        console.log("****** 121313 ******", 121313);
+
+        dispatch({ type: "SIGN_OUT" });
+      },
       signUp: () => {
         dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },

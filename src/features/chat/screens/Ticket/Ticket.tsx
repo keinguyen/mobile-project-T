@@ -1,14 +1,15 @@
 import { requestAPI } from "@src/apis/requestAPI";
-import { Button, Text, View } from "@src/components";
+import { Box, Button, Text, View } from "@src/components";
 import { screens } from "@src/features/chat";
-import styles from "@src/features/chat/screens/Ticket/Ticket.style";
 import { Ticket } from "@src/features/chat/type";
 import { TicketScreenProps } from "@src/navigation/types";
 import { actions, selectors } from "@src/store/redux";
 import React from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
+import styles from "./Ticket.style";
+import { TColorName } from "@src/theme";
 
 export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
   const tickets = useSelector(selectors.ticket.tickets);
@@ -37,8 +38,30 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
     navigation.navigate(screens.TicketDetail, { channelId });
   };
 
+  const getStatus = (
+    status: "processing" | "completed" | null
+  ): { status: string; color: TColorName } => {
+    switch (status) {
+      case "processing":
+        return {
+          color: "accent",
+          status: "Đang xử lý",
+        };
+      case "completed":
+        return {
+          color: "grey400",
+          status: "Hoàn thành",
+        };
+      default:
+        return {
+          color: "green500",
+          status: "Chờ xử lý",
+        };
+    }
+  };
+
   return (
-    <View flex={1} p={16}>
+    <View flex={1} mt={24}>
       <FlatList<Ticket>
         data={tickets || []}
         windowSize={10}
@@ -48,24 +71,44 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
         keyExtractor={(item, index) => `${item?.id}-${index}`}
         contentContainerStyle={styles.contentContainer}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity onPress={() => onTicketDetails(item.channelId)}>
-            <View
-              p={16}
-              bg="white"
-              border={1}
-              borderRadius="medium"
-              borderColor="grey200"
-            >
-              <Text>{item?.title}</Text>
-              <Text>{item?.desc}</Text>
+            <View p={12} border={1} borderRadius="small">
+              <Text variant={"primary"} color={"grey400"} fontWeight={"600"}>
+                #{index + 1} {item?.title}
+              </Text>
+              <View mb={8}></View>
+              <Text variant={"secondary"}>{item?.desc}</Text>
+              <View
+                bg={
+                  getStatus(
+                    index === 1
+                      ? "completed"
+                      : index === 0
+                      ? "processing"
+                      : null
+                  ).color
+                }
+                w={100}
+                align="center"
+                style={styles.statusLabel}
+              >
+                <Text variant={"secondary"} color={"white"}>
+                  {
+                    getStatus(
+                      index === 1
+                        ? "completed"
+                        : index === 0
+                        ? "processing"
+                        : null
+                    ).status
+                  }
+                </Text>
+              </View>
             </View>
           </TouchableOpacity>
         )}
       />
-      <View style={[styles.addButton, styles.boxWithShadow]}>
-        <Button label="Add" borderRadius="xl" onPress={onCreateTicket} />
-      </View>
     </View>
   );
 };

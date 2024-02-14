@@ -30,6 +30,12 @@ export const app = createSlice({
     updateProfile: (state, action) => {
       state.userProfile = action.payload;
     },
+    deleteProfile: (state) => {
+      state.userProfile = {
+        accessToken: "",
+        username: "",
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(extraActions.purge.type, () => initialState);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   Divider,
@@ -6,22 +6,46 @@ import {
   Button,
   ListRowItem,
   Image,
-} from '@src/components';
-import { ScrollView, Alert, AlertButton } from 'react-native';
-import { profile } from '@src/data/mock-profile';
-import { AuthContext } from '@src/auth';
-import { AccountProps } from './Account.type';
+  Text,
+  Card,
+  LottieView,
+  View,
+} from "@src/components";
+import {
+  ScrollView,
+  Alert,
+  AlertButton,
+  ImageBackground,
+  StyleSheet,
+} from "react-native";
+import { profile } from "@src/data/mock-profile";
+import { AuthContext } from "@src/auth";
+import { AccountProps } from "./Account.type";
+import { useDispatch, useSelector } from "react-redux";
+import Icon from "@src/components/Icon";
+import { actions } from "@src/store/redux";
 
 export const Account: React.FC<AccountProps> = ({ navigation }) => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = React.useState("");
   const { signOut } = React.useContext(AuthContext);
+  const dispatch = useDispatch();
+
+  const userProfile = useSelector((state) => {
+    return state.app.userProfile;
+  });
 
   const alertButtons: AlertButton[] = [
     {
-      text: 'Huỷ',
-      style: 'cancel',
+      text: "Huỷ",
+      style: "cancel",
     },
-    { text: 'OK', onPress: () => signOut() },
+    {
+      text: "OK",
+      onPress: () => {
+        signOut();
+        dispatch(actions.app.deleteProfile());
+      },
+    },
   ];
 
   const onSearch = (e: string) => {
@@ -29,53 +53,50 @@ export const Account: React.FC<AccountProps> = ({ navigation }) => {
   };
 
   const onLogoutButtonPress = () => {
-    Alert.alert('Xác nhận', 'Bạn chắc chắn muốn đăng xuất chứ?', alertButtons);
+    Alert.alert("Xác nhận", "Bạn chắc chắn muốn đăng xuất chứ?", alertButtons);
   };
 
   return (
     <ScrollView>
-      <Box padding="m" backgroundColor="card">
-        <TextField
-          leftIcon="search"
-          inputProps={{
-            value: searchTerm,
-            placeholder: 'Tìm kiếm',
-            onChangeText: onSearch,
-          }}
-        />
+      <ImageBackground
+        resizeMode="stretch"
+        style={styles.imageBackground}
+        source={require("../../assets/app/profile.jpg")}
+      ></ImageBackground>
+      <Box style={styles.username} flexDirection={"row"}>
+        <View mr={12} />
+        <Text
+          variant={"secondary"}
+          fontSize={18}
+          color={"grey400"}
+          fontWeight={"500"}
+        >
+          Xin chào {userProfile.username}!
+        </Text>
       </Box>
-      <Divider />
-      <Box backgroundColor="card">
-        <ListRowItem
-          title={profile.name}
-          subTitle="Chỉnh sữa tài khoản"
-          onPress={() => navigation.navigate('EditProfile')}
-          leftElement={<Image source={profile.avatar} width={60} height={60} />}
-          hasChevron
-        />
-      </Box>
-      <Box backgroundColor="card" marginTop="m">
-        {/* <Divider />
-        <ListRowItem
-          title="Địa chỉ đã lưu"
-          onPress={() => navigation.navigate('SavedAddresses')}
-          hasChevron
-        /> */}
-        <Divider />
-        <ListRowItem
-          title="Cài đặt"
-          onPress={() => navigation.navigate('Settings')}
-          hasChevron
-        />
-        <Divider />
-        <ListRowItem
-          title="Hotline"
-          onPress={() => navigation.navigate('SupportCenter')}
-          hasChevron
-        />
-        <Divider />
-        {/* <ListRowItem title="Share Feedback" hasChevron /> */}
-      </Box>
+
+      <Card borderRadius="m" marginTop="m" marginHorizontal="m">
+        <Box flexDirection="row">
+          <Box flex={1} justifyContent="center">
+            <Text
+              variant="secondary"
+              fontWeight={"500"}
+              fontSize={17}
+              color="grey400"
+            >
+              Hotline hổ trợ kỹ thuật: 0973330980
+            </Text>
+          </Box>
+          <Box width={120} justifyContent="center" alignItems="center">
+            <LottieView
+              source={require("@src/assets/animations/support-center.json")}
+              autoPlay
+              width="100%"
+            />
+          </Box>
+        </Box>
+      </Card>
+
       <Box padding="m">
         <Button
           label="Đăng xuất"
@@ -87,3 +108,14 @@ export const Account: React.FC<AccountProps> = ({ navigation }) => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  imageBackground: {
+    height: 80,
+  },
+  username: {
+    position: "absolute",
+    top: 24,
+    left: 12,
+  },
+});
