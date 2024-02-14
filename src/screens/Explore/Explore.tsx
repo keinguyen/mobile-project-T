@@ -54,7 +54,7 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
         <Text variant={"secondary"} fontWeight={"500"}>
           Danh sách yêu cầu:
         </Text>
-        <TicketScreen />
+        <TicketScreen navigation={navigation} />
         <Button label="Start Stream" onPress={startStream} />
         <Button label="Send dolby data" onPress={sendDolyData} />
         {!dolbyData ? (

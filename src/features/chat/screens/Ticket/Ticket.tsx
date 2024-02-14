@@ -15,10 +15,6 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
   const tickets = useSelector(selectors.ticket.tickets);
   const dispatch = useDispatch();
 
-  const onCreateTicket = () => {
-    navigation.navigate(screens.CreateTicket);
-  };
-
   const { isFetching, refetch } = useQuery(
     "fetchTickets",
     async () => {
