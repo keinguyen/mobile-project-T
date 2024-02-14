@@ -1,11 +1,16 @@
-import useChatListener from '@src/features/chat/hooks/useChatListener';
-import streamChatServices from '@src/features/chat/services/stream-chat.services';
-import { PropsWithChildren } from 'react';
-import { Chat, OverlayProvider } from 'stream-chat-react-native';
+import useChatListener from "@src/features/chat/hooks/useChatListener";
+import streamChatServices from "@src/features/chat/services/stream-chat.services";
+import { PropsWithChildren } from "react";
+import { Chat, OverlayProvider } from "stream-chat-react-native";
 
 export const ChatStreamProvider = (props: PropsWithChildren<{}>) => {
   const { children } = props;
   useChatListener();
+
+  console.log(
+    "****** streamChatServices.client ******",
+    streamChatServices.client
+  );
 
   return (
     <OverlayProvider
@@ -18,7 +23,8 @@ export const ChatStreamProvider = (props: PropsWithChildren<{}>) => {
             },
           },
         },
-      }}>
+      }}
+    >
       <Chat client={streamChatServices.client as never}>{children}</Chat>
     </OverlayProvider>
   );

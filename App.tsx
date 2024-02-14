@@ -1,18 +1,18 @@
-import { PortalProvider } from '@gorhom/portal';
-import { AuthProvider } from '@src/auth';
-import { CartProvider } from '@src/cart';
-import AnimatedSplashScreen from '@src/components/AnimatedSplashScreen/AnimatedSplashScreen';
-import { RootNavigation } from '@src/navigation';
-import { reduxStore } from '@src/store';
-import { AppThemeProvider } from '@src/theme/AppThemeProvider';
-import React, { useCallback, useEffect, useState } from 'react';
-import { LogBox, StyleSheet } from 'react-native';
-import BootSplash from 'react-native-bootsplash';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+import { PortalProvider } from "@gorhom/portal";
+import { AuthProvider } from "@src/auth";
+import { CartProvider } from "@src/cart";
+import AnimatedSplashScreen from "@src/components/AnimatedSplashScreen/AnimatedSplashScreen";
+import { RootNavigation } from "@src/navigation";
+import { reduxStore } from "@src/store";
+import { AppThemeProvider } from "@src/theme/AppThemeProvider";
+import React, { useCallback, useEffect, useState } from "react";
+import { LogBox, StyleSheet } from "react-native";
+import BootSplash from "react-native-bootsplash";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 const styles = StyleSheet.create({
   container: {

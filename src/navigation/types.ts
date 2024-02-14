@@ -61,12 +61,6 @@ export type NotificationStackParamList = {
 
 export type AccountStackParamList = {
   Account: undefined;
-  EditProfile: undefined;
-  SavedAddresses: undefined;
-  AddAddress: undefined;
-  SelectLocation: undefined;
-  Settings: undefined;
-  SupportCenter: undefined;
 };
 
 export type TabParamList = {

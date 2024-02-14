@@ -1,14 +1,25 @@
 import { requestAPI } from "@src/apis/requestAPI";
-import { Button, TextField, View } from "@src/components";
+import {
+  Box,
+  Button,
+  LottieView,
+  Text,
+  TextField,
+  View,
+} from "@src/components";
+import AnimatedSplashScreen from "@src/components/AnimatedSplashScreen/AnimatedSplashScreen";
+import Icon from "@src/components/Icon";
 import { TicketStackParamList } from "@src/features/chat";
 import streamChatServices from "@src/features/chat/services/stream-chat.services";
 import { FileService } from "@src/features/chat/services/upload-file.services";
 import { Ticket, TicketStatus } from "@src/features/chat/type";
 import { ScreenProps } from "@src/navigation/types";
 import { actions } from "@src/store/redux";
+import AnimatedLottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Image, Keyboard, ScrollView } from "react-native";
+import { Alert, Image, Keyboard, ScrollView } from "react-native";
+import { ZoomOut } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 
 interface FormValues {
@@ -27,20 +38,14 @@ export const CreateTicket: React.FC<
 > = ({ navigation }) => {
   const dispatch = useDispatch();
   const formData = useRef<FormData>();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     control,
     handleSubmit,
     formState: { isValid },
+    getValues,
   } = useForm<FormValues>({
     defaultValues: {
-      // title: "Honda SH150i",
-      // descriptions: "Like new",
-      // patientInfo: {
-      //   fisrtName: "Nguyen",
-      //   lastName: "Van B",
-      //   phoneNumber: "0355732994",
-      // },
-      // price: "50000000",
       title: undefined,
       descriptions: undefined,
       patientInfo: {
@@ -56,11 +61,12 @@ export const CreateTicket: React.FC<
     formData.current = new FormData();
   }, []);
 
-  const onSetupPassphrase: SubmitHandler<FormValues> = async (values) => {
+  const onCreate: SubmitHandler<FormValues> = async (values) => {
     Keyboard.dismiss();
-
+    setIsLoading(true);
     try {
       if (!isValid) {
+        Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin");
         return;
       }
 
@@ -99,62 +105,29 @@ export const CreateTicket: React.FC<
       }
     } catch (error) {
       console.log("Erorr: ", error);
+      Alert.alert("Lỗi", "Tạo yêu cầu bị lỗi");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <View flex={1} px={16} pt={16} pb={32}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View pb={16}>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-                <TextField
-                  inputProps={{
-                    value: value,
-                    onBlur: onBlur,
-                    onChangeText: onChange,
-                    placeholder: "Tiêu đề",
-                    keyboardType: "default",
-                    autoFocus: true,
-                  }}
-                />
-              </View>
-            )}
-            name="title"
-          />
-        </View>
-        <View pb={16}>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-                <TextField
-                  inputProps={{
-                    value: value,
-                    onBlur: onBlur,
-                    onChangeText: onChange,
-                    placeholder: "Chi tiết",
-                    keyboardType: "default",
-                  }}
-                />
-              </View>
-            )}
-            name="descriptions"
-          />
-        </View>
-        <View flex={1} pb={16} flexDirection="row">
-          <View flex={1}>
+    <>
+      <View flex={1} px={16} pt={16} pb={32}>
+        <Text variant={"primary"} color={"grey500"} fontWeight={"500"}>
+          {"Thông tin sản phẩm"}
+        </Text>
+        <View mb={12} />
+        <Text variant={"secondary"} color={"grey400"} fontWeight={"400"}>
+          Bạn cần điền đầy đủ những thông tin này để người kiểm định nắm được
+          thông tin
+        </Text>
+        <View mb={12} />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View pb={16}>
             <Controller
               control={control}
               rules={{
@@ -162,105 +135,249 @@ export const CreateTicket: React.FC<
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <View>
+                  <Box flexDirection={"row"} mb={"s"}>
+                    <Text
+                      variant={"secondary"}
+                      fontWeight={"500"}
+                      color={"grey500"}
+                      fontSize={12}
+                    >
+                      {"Tên sản phẩm"}
+                    </Text>
+                    <Text variant={"secondary"} color={"red500"}>
+                      *
+                    </Text>
+                  </Box>
                   <TextField
                     inputProps={{
                       value: value,
                       onBlur: onBlur,
                       onChangeText: onChange,
-                      placeholder: "Fisrt name",
+                      placeholder: "Tên sản phẩm",
                       keyboardType: "default",
+                      autoFocus: true,
                     }}
                   />
                 </View>
               )}
-              name="patientInfo.fisrtName"
+              name="title"
             />
           </View>
-          <View w={16} />
-          <View flex={1}>
+          <View pb={16}>
             <Controller
               control={control}
               rules={{
-                required: true,
+                required: false,
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <View>
+                  <Box flexDirection={"row"} mb={"s"}>
+                    <Text
+                      variant={"secondary"}
+                      fontWeight={"500"}
+                      color={"grey500"}
+                      fontSize={12}
+                    >
+                      {"Chi tiết sản phẩm"}
+                    </Text>
+                  </Box>
                   <TextField
                     inputProps={{
                       value: value,
                       onBlur: onBlur,
                       onChangeText: onChange,
-                      placeholder: "Last name",
+                      placeholder: "Chi tiết sản phẩm",
                       keyboardType: "default",
                     }}
                   />
                 </View>
               )}
-              name="patientInfo.lastName"
+              name="descriptions"
             />
           </View>
-        </View>
-        <View flex={1} pb={16}>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-                <TextField
-                  inputProps={{
-                    value: value,
-                    onBlur: onBlur,
-                    onChangeText: onChange,
-                    placeholder: "Phone number",
-                    keyboardType: "numeric",
-                  }}
-                />
-              </View>
-            )}
-            name="patientInfo.phoneNumber"
-          />
-        </View>
-        <View>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextField
-                inputProps={{
-                  value: value,
-                  onBlur: onBlur,
-                  onChangeText: onChange,
-                  placeholder: "Price",
-                  keyboardType: "numeric",
+          <View flex={1} pb={16} flexDirection="row">
+            <View flex={1}>
+              <Controller
+                control={control}
+                rules={{
+                  required: false,
                 }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View>
+                    <Box flexDirection={"row"} mb={"s"}>
+                      <Text
+                        variant={"secondary"}
+                        fontWeight={"500"}
+                        color={"grey500"}
+                        fontSize={12}
+                      >
+                        {"Họ"}
+                      </Text>
+                    </Box>
+                    <TextField
+                      inputProps={{
+                        value: value,
+                        onBlur: onBlur,
+                        onChangeText: onChange,
+                        placeholder: "Họ",
+                        keyboardType: "default",
+                      }}
+                    />
+                  </View>
+                )}
+                name="patientInfo.fisrtName"
               />
-            )}
-            name="price"
-          />
-        </View>
+            </View>
+            <View w={16} />
+            <View flex={1}>
+              <Controller
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View>
+                    <Box flexDirection={"row"} mb={"s"}>
+                      <Text
+                        variant={"secondary"}
+                        fontWeight={"500"}
+                        color={"grey500"}
+                        fontSize={12}
+                      >
+                        {"Tên"}
+                      </Text>
+                    </Box>
+                    <TextField
+                      inputProps={{
+                        value: value,
+                        onBlur: onBlur,
+                        onChangeText: onChange,
+                        placeholder: "Tên",
+                        keyboardType: "default",
+                      }}
+                    />
+                  </View>
+                )}
+                name="patientInfo.lastName"
+              />
+            </View>
+          </View>
+          <View flex={1} pb={16}>
+            <Controller
+              control={control}
+              rules={{
+                required: false,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <Box flexDirection={"row"} mb={"s"}>
+                    <Text
+                      variant={"secondary"}
+                      fontWeight={"500"}
+                      color={"grey500"}
+                      fontSize={12}
+                    >
+                      {"Số điện thoại"}
+                    </Text>
+                  </Box>
+                  <TextField
+                    inputProps={{
+                      value: value,
+                      onBlur: onBlur,
+                      onChangeText: onChange,
+                      placeholder: "Số điện thoại",
+                      keyboardType: "numeric",
+                    }}
+                  />
+                </View>
+              )}
+              name="patientInfo.phoneNumber"
+            />
+          </View>
+          <View>
+            <Controller
+              control={control}
+              rules={{
+                required: false,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <>
+                  <Box flexDirection={"row"} mb={"s"}>
+                    <Text
+                      variant={"secondary"}
+                      fontWeight={"500"}
+                      color={"grey500"}
+                      fontSize={12}
+                    >
+                      {"Giá mong muốn"}
+                    </Text>
+                  </Box>
+                  <TextField
+                    inputProps={{
+                      value: value,
+                      onBlur: onBlur,
+                      onChangeText: onChange,
+                      placeholder: "Giá mong muốn",
+                      keyboardType: "numeric",
+                    }}
+                  />
+                </>
+              )}
+              name="price"
+            />
+          </View>
 
+          <Box alignItems={"center"}>
+            <Button
+              variant="transparent"
+              onPress={async () => {
+                const res = await FileService.launchImageLibrary();
+                res && formData.current?.append("file", res);
+              }}
+              padding={"s"}
+            >
+              <Box
+                flexDirection={"row"}
+                justifyContent={"center"}
+                alignContent={"center"}
+                alignItems={"center"}
+              >
+                <Text variant={"secondary"} color={"grey500"} fontSize={12}>
+                  Tải hình sản phẩm
+                </Text>
+                <View mr={12} />
+                <Icon name="Upload" color="grey300" />
+              </Box>
+            </Button>
+          </Box>
+        </ScrollView>
         <Button
-          label="Upload file"
-          variant="success"
+          label="Tạo"
+          variant="primary"
           marginTop="s"
+          loading={isLoading}
           isFullWidth
-          onPress={async () => {
-            const res = await FileService.launchImageLibrary();
-            res && formData.current?.append("file", res);
+          onPress={() => {
+            if (!isValid) {
+              Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin");
+              return;
+            }
+
+            const values = getValues();
+            onCreate(values);
           }}
         />
-      </ScrollView>
-      <Button
-        label="Create"
-        variant="google"
-        marginTop="s"
-        isFullWidth
-        onPress={handleSubmit(onSetupPassphrase)}
-      />
-    </View>
+      </View>
+
+      {isLoading ? (
+        <LottieView
+          source={require("@src/assets/animations/loading.json")}
+          autoPlay
+          backgroundColor={"white"}
+        />
+      ) : (
+        <></>
+      )}
+    </>
   );
 };

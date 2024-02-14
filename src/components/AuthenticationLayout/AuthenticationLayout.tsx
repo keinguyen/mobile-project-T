@@ -13,17 +13,22 @@ export const AuthenticationLayout = ({
   const styles = useSafeAreaScrollViewStyles(true, true);
   return (
     <ScrollView contentContainerStyle={[styles.contentContainer]}>
-      <Box marginTop="l" marginBottom="m">
-        <Text fontWeight="bold" variant="largeHeader">
-          {title}
-        </Text>
-        {subtitle ? (
-          <Text variant="secondary" marginVertical="s">
-            {subtitle}
+      <Box marginTop="20%" marginBottom="m" flex={1}>
+        <Box alignItems={"center"} px={"m"}>
+          <Text fontWeight="bold" variant="largeHeader">
+            {title}
           </Text>
-        ) : null}
-        <Box marginTop="m">{children}</Box>
+          {subtitle ? (
+            <Text variant="secondary" marginVertical="s">
+              {subtitle}
+            </Text>
+          ) : null}
+        </Box>
+        <Box marginTop="m" width={"100%"}>
+          {children}
+        </Box>
       </Box>
+
       {footer ? <Box>{footer}</Box> : null}
     </ScrollView>
   );

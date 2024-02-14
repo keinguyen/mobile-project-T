@@ -1,7 +1,7 @@
-import React from 'react';
-import { TextInput, I18nManager } from 'react-native';
-import { Box } from '../Box';
-import { InputRestyleProps, TextFieldProps } from './TextField.type';
+import React from "react";
+import { TextInput } from "react-native";
+import { Box } from "../Box";
+import { InputRestyleProps, TextFieldProps } from "./TextField.type";
 import {
   backgroundColor,
   border,
@@ -12,9 +12,8 @@ import {
   spacing,
   typography,
   visible,
-} from '@shopify/restyle';
-import { Theme, fontSize, useAppTheme } from '@src/theme';
-import { Icon } from '../Icon';
+} from "@shopify/restyle";
+import { Theme, fontSize, useAppTheme } from "@src/theme";
 
 const InnerTextInput = createRestyleComponent<
   InputRestyleProps & React.ComponentProps<typeof TextInput>,
@@ -30,7 +29,7 @@ const InnerTextInput = createRestyleComponent<
     border,
     typography,
   ],
-  TextInput,
+  TextInput
 );
 
 export const TextField: React.FC<TextFieldProps> = ({
@@ -59,25 +58,21 @@ export const TextField: React.FC<TextFieldProps> = ({
       alignItems="center"
       borderRadius="l"
       backgroundColor="card"
-      borderWidth={borderWidth}
-      borderColor="border"
-      height={55}
+      borderWidth={1}
+      borderColor={borderWidth === 2 ? "accent" : "border"}
+      height={45}
       {...rest}
-      margin={hasMargin ? 's' : undefined}>
-      {leftIcon ? (
-        <Box paddingLeft="m" paddingRight={I18nManager.isRTL ? 's' : 'none'}>
-          <Icon name={leftIcon} size={leftIconSize} color={colors.text} />
-        </Box>
-      ) : null}
+      margin={hasMargin ? "s" : undefined}
+    >
       <InnerTextInput
         color="text"
-        fontSize={fontSize.m}
+        fontSize={fontSize.s}
         placeholderTextColor={colors.secondary}
         underlineColorAndroid="transparent"
         flex={1}
-        padding="m"
-        paddingHorizontal="m"
-        paddingLeft={leftIcon ? 's' : undefined}
+        padding="s"
+        paddingHorizontal="s"
+        paddingLeft={leftIcon ? "s" : undefined}
         borderRadius="l"
         backgroundColor="transparent"
         height="100%"

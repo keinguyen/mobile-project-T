@@ -16,7 +16,7 @@ export const requestAPI = async <T>(params: {
   const result = await fetch(
     new URL(
       `.netlify/functions/${subject.split(".")[0]}`,
-      "http://192.168.1.11:9999/"
+      "https://ephemeral-salmiakki-1ae238.netlify.app/"
     ),
     {
       mode: "cors",

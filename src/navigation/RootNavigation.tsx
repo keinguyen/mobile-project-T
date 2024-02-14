@@ -4,9 +4,6 @@ import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import { AuthContext } from "@src/auth";
-import { ChatStreamProvider } from "@src/features/chat";
-import { DishDetails, SearchDishes } from "@src/screens";
 import {
   ThemeContext,
   darkTheme,
@@ -37,16 +34,11 @@ export const RootNavigation = () => {
     <>
       <NavigationContainer theme={navigationTheme}>
         <StatusBar
-          backgroundColor={
-            theme === "light"
-              ? defaultTheme.colors.background
-              : darkTheme.colors.background
-          }
+          backgroundColor={"white"}
           barStyle={theme === "light" ? "dark-content" : "light-content"}
         />
-        <ChatStreamProvider>
-          <RootNavigator />
-        </ChatStreamProvider>
+
+        <RootNavigator />
       </NavigationContainer>
       <PortalHost name="rootPortal" />
     </>
@@ -80,18 +72,6 @@ function RootNavigator(): JSX.Element {
     return {
       ["AuthenticationStacks"]: {
         screen: AuthenticationStack,
-        options: { headerShown: false },
-      },
-      ["DishDetailsModal"]: {
-        screen: DishDetails,
-        options: {
-          headerTransparent: true,
-          title: "",
-          headerBackTitleVisible: false,
-        },
-      },
-      ["SearchDishesModal"]: {
-        screen: SearchDishes,
         options: { headerShown: false },
       },
     };

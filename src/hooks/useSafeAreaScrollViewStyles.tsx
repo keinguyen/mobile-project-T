@@ -1,11 +1,11 @@
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useAppTheme } from '@src/theme';
-import { StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useAppTheme } from "@src/theme";
+import { StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const useSafeAreaScrollViewStyles = (
   hasExtraPadding = false,
-  hasTransparentHeader = false,
+  hasTransparentHeader = false
 ) => {
   const {
     spacing: { m },
@@ -27,6 +27,7 @@ export const useSafeAreaScrollViewStyles = (
       paddingRight: handleExtraPadding(right),
       paddingTop: handlePaddingTop(),
       paddingBottom: m,
+      flex: 1,
     },
   });
 };

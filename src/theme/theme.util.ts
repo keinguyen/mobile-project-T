@@ -1,7 +1,7 @@
-import { ColorSchemeName } from 'react-native/types';
-import { Theme, darkTheme, theme } from './theme';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { SpacingProps } from '@shopify/restyle';
+import { ColorSchemeName } from "react-native/types";
+import { Theme, darkTheme, theme } from "./theme";
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { SpacingProps } from "@shopify/restyle";
 
 export const fontSize = {
   xs: 11,
@@ -14,17 +14,17 @@ export const fontSize = {
 };
 
 export const getNavigationTheme = (themeScheme: ColorSchemeName) => {
-  const appTheme = themeScheme === 'light' ? theme.colors : darkTheme.colors;
+  const appTheme = themeScheme === "light" ? theme.colors : darkTheme.colors;
 
   const defaultNavigationTheme =
-    themeScheme === 'light' ? DefaultTheme : DarkTheme;
+    themeScheme === "light" ? DefaultTheme : DarkTheme;
 
   return {
     ...defaultNavigationTheme,
     colors: {
       ...defaultNavigationTheme.colors,
       primary: appTheme.primary,
-      background: appTheme.background,
+      background: appTheme.white,
       card: appTheme.card,
       text: appTheme.text,
       border: appTheme.border,
