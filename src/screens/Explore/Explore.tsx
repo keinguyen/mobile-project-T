@@ -25,8 +25,6 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
         )}/${generateRandomString(10)}`
       );
 
-      console.log("****** dolby startStream ******", dolby);
-
       setDoldyData({
         streamName: dolby.data.data.streams[0].streamName,
         token: dolby.data.data.token,
@@ -48,29 +46,13 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <ExploreHeaderTitle />
+      <ExploreHeaderTitle navigation={navigation} />
 
       <Box bg={"white"} height={"100%"} width={"100%"} pt={"l"} px={"m"}>
         <Text variant={"secondary"} fontWeight={"500"}>
           Danh sách yêu cầu:
         </Text>
         <TicketScreen navigation={navigation} />
-        <Button label="Start Stream" onPress={startStream} />
-        <Button label="Send dolby data" onPress={sendDolyData} />
-        {!dolbyData ? (
-          <></>
-        ) : (
-          <>
-            <MillicastWidgetPublisher
-              streamName={dolbyData.streamName}
-              token={dolbyData.token}
-            />
-            <MillicastWidgetViewer
-              accountID="JZac6x"
-              streamName={dolbyData.streamName}
-            />
-          </>
-        )}
       </Box>
     </SafeAreaView>
   );

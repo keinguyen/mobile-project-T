@@ -37,9 +37,8 @@ export const RootNavigation = () => {
           backgroundColor={"white"}
           barStyle={theme === "light" ? "dark-content" : "light-content"}
         />
-        {/* <ChatStreamProvider> */}
+
         <RootNavigator />
-        {/* </ChatStreamProvider> */}
       </NavigationContainer>
       <PortalHost name="rootPortal" />
     </>

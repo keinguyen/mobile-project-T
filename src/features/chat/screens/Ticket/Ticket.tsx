@@ -21,6 +21,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
       const result = await requestAPI<Array<Ticket>>({
         subject: "tickets.api.getList",
       });
+
       dispatch(actions.ticket.setAllTickets(result));
     },
     {
@@ -70,8 +71,8 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
         renderItem={({ item, index }) => (
           <TouchableOpacity onPress={() => onTicketDetails(item.channelId)}>
             <View p={12} border={1} borderRadius="small">
-              <Text variant={"primary"} color={"grey400"} fontWeight={"600"}>
-                #{index + 1} {item?.title}
+              <Text variant={"primary"} color={"grey400"} fontWeight={"500"}>
+                #{index + 1} {item?.title.toUpperCase()}
               </Text>
               <View mb={8}></View>
               <Text variant={"secondary"}>{item?.desc}</Text>
@@ -88,8 +89,9 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
                 w={100}
                 align="center"
                 style={styles.statusLabel}
+                py={3}
               >
-                <Text variant={"secondary"} color={"white"}>
+                <Text variant={"secondary"} color={"white"} fontSize={10}>
                   {
                     getStatus(
                       index === 1

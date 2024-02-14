@@ -1,12 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Box, Button, Text } from "../elements";
-import { AuthContext } from "@src/auth";
 import { useSelector } from "react-redux";
-import { selectors } from "@src/store/redux";
 import { ImageBackground, Platform, StyleSheet } from "react-native";
 import Icon from "../Icon";
+import { screens } from "@src/features/chat";
 
-export const ExploreHeaderTitle = () => {
+export const ExploreHeaderTitle = ({ navigation }) => {
   const userProfile = useSelector((state) => {
     return state.app.userProfile;
   });
@@ -21,9 +20,7 @@ export const ExploreHeaderTitle = () => {
       <Box style={styles.setting}>
         <Button
           variant={"transparent"}
-          onPress={() => {
-            console.log("****** 1 ******", 1);
-          }}
+          onPress={() => navigation.navigate(screens.CreateTicket)}
         >
           <Box flexDirection={"row"}>
             <Icon name="PlusCircle" color={"grey400"} />

@@ -1,13 +1,28 @@
-import { Box } from "@src/components";
+import { Box, Button, LottieView, Text } from "@src/components";
 import Icon from "@src/components/Icon";
-import { ChatStreamProvider, TicketStackParamList } from "@src/features/chat";
+import {
+  ChatStreamProvider,
+  TicketStackParamList,
+  screens,
+} from "@src/features/chat";
 import styles from "@src/features/chat/screens/ChannelChat/ChannelChat.style";
 import streamChatServices from "@src/features/chat/services/stream-chat.services";
 import { useKeyboardEffect } from "@src/hooks/useKeyboardEffect";
 import { ScreenProps } from "@src/navigation/types";
+import MillicastWidgetPublisher from "@src/screens/Explore/MillicastWidgetPublisher";
+import MillicastWidgetViewer from "@src/screens/Explore/MillicastWidgetViewer";
 import { theme } from "@src/theme";
+import { generateRandomString } from "@src/utils/random-string";
+import axios from "axios";
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, Platform, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useQuery } from "react-query";
 import {
   Channel,
@@ -15,10 +30,18 @@ import {
   MessageList,
   useMessageInputContext,
 } from "stream-chat-react-native";
-
 export const ChannelChat: React.FC<
   ScreenProps<TicketStackParamList, "TicketDetail">
-> = ({ route }) => {
+> = ({ route, navigation }) => {
+  return (
+    <ChatStreamProvider>
+      <ChannelChatDetails navigation={navigation} route={route} />
+    </ChatStreamProvider>
+  );
+};
+export const ChannelChatDetails: React.FC<
+  ScreenProps<TicketStackParamList, "TicketDetail">
+> = ({ route, navigation }) => {
   const {
     params: { channelId },
   } = route;
@@ -40,6 +63,7 @@ export const ChannelChat: React.FC<
   );
 
   const [kbHeight, setKbHeight] = useState<number>(0);
+
   const handleKeyboardEvent = useCallback((isShow: boolean) => {
     setKbHeight(isShow ? 78 : 0);
   }, []);
@@ -59,9 +83,51 @@ export const ChannelChat: React.FC<
     );
   }
 
+  const startStream = async () => {
+    try {
+      const dolby = await axios.get(
+        `https://appraisal-hub.onrender.com/api/dolby/token/${generateRandomString(
+          10
+        )}/${generateRandomString(10)}`
+      );
+
+      navigation.navigate(screens.Call, {
+        token: dolby.data.data.token,
+        streamName: dolby.data.data.streams[0].streamName,
+      });
+    } catch (error) {
+      Alert.alert("Lỗi", "Không thực được");
+    }
+  };
+
   return (
-    <Box flex={1}>
-      <ChatStreamProvider>
+    <SafeAreaProvider>
+      <Box
+        flexDirection={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        px={"s"}
+      >
+        <Button
+          variant={"transparent"}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <Icon name="ArrowLeft" />
+        </Button>
+        <Text fontWeight={"500"}>Phòng chat</Text>
+        <Button
+          variant={"transparent"}
+          onPress={() => {
+            startStream();
+          }}
+        >
+          <Icon name="PhoneCall" color="grey400" />
+        </Button>
+      </Box>
+
+      <Box flex={1}>
         <Channel
           giphyEnabled={false}
           channel={channel}
@@ -76,7 +142,7 @@ export const ChannelChat: React.FC<
             <MessageInput
               InputButtons={AttachButton}
               additionalTextInputProps={{
-                placeholder: "SMS",
+                placeholder: "Nhập tin nhắn",
                 placeholderTextColor: theme.colors.grey300,
                 style: [
                   styles.messagesInput,
@@ -88,8 +154,8 @@ export const ChannelChat: React.FC<
             />
           </Box>
         </Channel>
-      </ChatStreamProvider>
-    </Box>
+      </Box>
+    </SafeAreaProvider>
   );
 };
 
@@ -103,7 +169,7 @@ const SendMessagesButton: React.FC = () => {
       onPress={sendMessage}
       disabled={!isValid}
     >
-      <Icon name="Send" color="blue500" />
+      <Icon name="Send" color="grey400" />
     </TouchableOpacity>
   );
 };
@@ -117,7 +183,7 @@ const AttachButton: React.FC = () => {
         style={styles.attachButton}
         onPress={openAttachmentPicker}
       >
-        <Icon name="AddImage" color="blue500" />
+        <Icon name="AddImage" color="grey400" />
       </TouchableOpacity>
     </Box>
   );

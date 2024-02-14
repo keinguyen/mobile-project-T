@@ -198,3 +198,5 @@ export { default as Play } from "./Play";
 export { default as PlayCircle } from "./PlayCircle";
 export { default as HomeSelected } from "./HomeSelected";
 export { default as HomeNotSelected } from "./HomeNotSelected";
+export { default as PhoneCallNotSelected } from "./PhoneCallNotSelected";
+export { default as PhoneCallSelected } from "./PhoneCallSelected";
