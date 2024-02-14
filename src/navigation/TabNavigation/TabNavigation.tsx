@@ -1,16 +1,17 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon, { IconName } from '@src/components/Icon';
-import { TicketScreen } from '@src/features/chat/screens/Ticket';
-import { fontSize } from '@src/theme';
-import React from 'react';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon, { IconName } from "@src/components/Icon";
+import { TicketScreen } from "@src/features/chat/screens/Ticket";
+import { fontSize } from "@src/theme";
+import React from "react";
 import {
   AccountStack,
   ActivityHistoryStack,
   ExploreStack,
   NotificationStack,
-} from '../Stacks';
-import { TabParamList } from '../types';
-import styles from './TabNavigation.style';
+} from "../Stacks";
+import { TabParamList } from "../types";
+import styles from "./TabNavigation.style";
+import { TicketStack } from "@src/navigation/Stacks/TicketStack/TicketStack";
 
 type TabBarIconProps = {
   focused: boolean;
@@ -23,22 +24,22 @@ const { Navigator } = Tab;
 const renderTabBarIcon = (routeName: keyof TabParamList) => {
   return (props: TabBarIconProps) => {
     const { focused } = props;
-    let iconName: IconName = 'Archive';
+    let iconName: IconName = "Archive";
     switch (routeName) {
-      case 'ExploreTab':
-        iconName = 'ArrowLeft';
+      case "ExploreTab":
+        iconName = "ArrowLeft";
         break;
-      case 'ActivityHistoryTab':
-        iconName = 'ChevronDown';
+      case "ActivityHistoryTab":
+        iconName = "ChevronDown";
         break;
-      case 'NotificationTab':
-        iconName = 'CornerUpLeft';
+      case "NotificationTab":
+        iconName = "CornerUpLeft";
         break;
-      case 'AccountTab':
-        iconName = 'Clipboard';
+      case "AccountTab":
+        iconName = "Clipboard";
         break;
-      case 'TicketTab':
-        iconName = 'AlertOctagon';
+      case "TicketTab":
+        iconName = "AlertOctagon";
         break;
       default:
         break;
@@ -47,7 +48,7 @@ const renderTabBarIcon = (routeName: keyof TabParamList) => {
       <Icon
         name={iconName}
         size={fontSize.xl}
-        color={focused ? 'blue500' : 'grey300'}
+        color={focused ? "blue500" : "grey300"}
       />
     );
   };
@@ -66,41 +67,50 @@ const TabNavigation = () => {
           tabBarIcon: renderTabBarIcon(routeName),
           tabBarItemStyle: styles.tabItem,
         };
-      }}>
+      }}
+    >
       <Tab.Screen
         name="ExploreTab"
         component={ExploreStack}
         options={{
-          title: 'Trang chủ',
+          title: "Trang chủ",
         }}
       />
       <Tab.Screen
+        name="TicketTab"
+        component={TicketStack}
+        options={{
+          title: "Yêu cầu",
+          headerShown: false,
+        }}
+      />
+      {/* <Tab.Screen
         name="TicketTab"
         component={TicketScreen}
         options={{
           title: 'Yêu cầu',
           headerShown: true,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="ActivityHistoryTab"
         component={ActivityHistoryStack}
         options={{
-          title: 'Lịch sử',
+          title: "Lịch sử",
         }}
       />
       <Tab.Screen
         name="NotificationTab"
         component={NotificationStack}
         options={{
-          title: 'Thông Báo',
+          title: "Thông Báo",
         }}
       />
       <Tab.Screen
         name="AccountTab"
         component={AccountStack}
         options={{
-          title: 'Tài khoản',
+          title: "Tài khoản",
         }}
       />
     </Navigator>

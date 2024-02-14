@@ -4,8 +4,6 @@ import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import { AuthContext } from "@src/auth";
-import { ChatStreamProvider } from "@src/features/chat";
 import { DishDetails, SearchDishes } from "@src/screens";
 import {
   ThemeContext,
@@ -16,13 +14,12 @@ import {
 import React, { useContext, useMemo } from "react";
 import { Platform, StatusBar } from "react-native";
 import "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 import { AuthenticationStack } from "./Stacks";
 import TabNavigation from "./TabNavigation";
 import { RootStackParamList } from "./types";
-import { TicketRouter } from "@src/features/chat";
-import { useSelector } from "react-redux";
-import { useInitializeApp } from "@src/hooks/useInitApp";
-import useNotification from "@src/hooks/useNotification";
+// import { useInitializeApp } from "@src/hooks/useInitApp";
+// import useNotification from "@src/hooks/useNotification";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -44,9 +41,7 @@ export const RootNavigation = () => {
           }
           barStyle={theme === "light" ? "dark-content" : "light-content"}
         />
-        <ChatStreamProvider>
-          <RootNavigator />
-        </ChatStreamProvider>
+        <RootNavigator />
       </NavigationContainer>
       <PortalHost name="rootPortal" />
     </>
@@ -68,13 +63,13 @@ function RootNavigator(): JSX.Element {
   });
 
   const stacks = useMemo(() => {
-    if (userProfile.username) {
+    if (userProfile?.username) {
       return {
         ["MainStacks"]: {
           screen: TabNavigation,
           options: { headerShown: false },
         },
-        ...TicketRouter,
+        // ...TicketRouter,
       };
     }
     return {
@@ -95,10 +90,10 @@ function RootNavigator(): JSX.Element {
         options: { headerShown: false },
       },
     };
-  }, [userProfile.username]);
+  }, [userProfile?.username]);
 
-  useInitializeApp(!!userProfile);
-  useNotification();
+  // useInitializeApp(!!userProfile);
+  // useNotification();
 
   return (
     <RootStack.Navigator screenOptions={rootOptions}>
