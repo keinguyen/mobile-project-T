@@ -1,4 +1,4 @@
-import { Box, Button, LottieView, Text } from "@src/components";
+import { Box, Button, Text, View } from "@src/components";
 import Icon from "@src/components/Icon";
 import {
   ChatStreamProvider,
@@ -7,10 +7,9 @@ import {
 } from "@src/features/chat";
 import styles from "@src/features/chat/screens/ChannelChat/ChannelChat.style";
 import streamChatServices from "@src/features/chat/services/stream-chat.services";
+import { FileService } from "@src/features/chat/services/upload-file.services";
 import { useKeyboardEffect } from "@src/hooks/useKeyboardEffect";
 import { ScreenProps } from "@src/navigation/types";
-import MillicastWidgetPublisher from "@src/screens/Explore/MillicastWidgetPublisher";
-import MillicastWidgetViewer from "@src/screens/Explore/MillicastWidgetViewer";
 import { theme } from "@src/theme";
 import { generateRandomString } from "@src/utils/random-string";
 import axios from "axios";
@@ -19,28 +18,32 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
-  StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "react-query";
 import {
   Channel,
   MessageInput,
   MessageList,
+  MessageSimple,
+  useMessageContext,
   useMessageInputContext,
 } from "stream-chat-react-native";
 export const ChannelChat: React.FC<
-  ScreenProps<TicketStackParamList, "TicketDetail">
+  ScreenProps<TicketStackParamList, "ChannelChat">
 > = ({ route, navigation }) => {
   return (
-    <ChatStreamProvider>
-      <ChannelChatDetails navigation={navigation} route={route} />
-    </ChatStreamProvider>
+    <SafeAreaView edges={["left", "right", "top"]} style={{ flex: 1 }}>
+      <ChatStreamProvider>
+        <ChannelChatDetails navigation={navigation} route={route} />
+      </ChatStreamProvider>
+    </SafeAreaView>
   );
 };
-export const ChannelChatDetails: React.FC<
-  ScreenProps<TicketStackParamList, "TicketDetail">
+
+const ChannelChatDetails: React.FC<
+  ScreenProps<TicketStackParamList, "ChannelChat">
 > = ({ route, navigation }) => {
   const {
     params: { channelId },
@@ -65,7 +68,7 @@ export const ChannelChatDetails: React.FC<
   const [kbHeight, setKbHeight] = useState<number>(0);
 
   const handleKeyboardEvent = useCallback((isShow: boolean) => {
-    setKbHeight(isShow ? 78 : 0);
+    setKbHeight(isShow ? 92 : 0);
   }, []);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks, curly
@@ -101,7 +104,7 @@ export const ChannelChatDetails: React.FC<
   };
 
   return (
-    <SafeAreaProvider>
+    <Box flex={1}>
       <Box
         flexDirection={"row"}
         alignItems={"center"}
@@ -140,7 +143,7 @@ export const ChannelChatDetails: React.FC<
           </Box>
           <Box style={{ paddingBottom: kbHeight }}>
             <MessageInput
-              InputButtons={AttachButton}
+              InputButtons={() => <AttachButton channelId={channelId} />}
               additionalTextInputProps={{
                 placeholder: "Nhập tin nhắn",
                 placeholderTextColor: theme.colors.grey300,
@@ -155,7 +158,7 @@ export const ChannelChatDetails: React.FC<
           </Box>
         </Channel>
       </Box>
-    </SafeAreaProvider>
+    </Box>
   );
 };
 
@@ -174,17 +177,50 @@ const SendMessagesButton: React.FC = () => {
   );
 };
 
-const AttachButton: React.FC = () => {
-  const { openAttachmentPicker } = useMessageInputContext();
+const AttachButton: React.FC<{ channelId: string }> = ({ channelId }) => {
+  // const { openAttachmentPicker } = useMessageInputContext();
+  const formData = new FormData();
+
+  const onUpload = async () => {
+    const res = await FileService.launchImageLibrary({
+      options: { selectionLimit: 1, mediaType: "photo" },
+    });
+    if (res?.length) {
+      res.forEach((e) => {
+        formData?.append("file", e);
+      });
+    }
+
+    await streamChatServices.sendMessage(channelId, "text");
+  };
 
   return (
     <Box mr="m">
-      <TouchableOpacity
-        style={styles.attachButton}
-        onPress={openAttachmentPicker}
-      >
+      <TouchableOpacity style={styles.attachButton} onPress={onUpload}>
         <Icon name="AddImage" color="grey400" />
       </TouchableOpacity>
     </Box>
   );
+};
+
+const CustomMessageUIComponent = () => {
+  const { message } = useMessageContext();
+
+  if (message.text?.includes("https:")) {
+    return (
+      <MessageSimple
+        message={message}
+        MessageContent={() => {
+          return (
+            <View>
+              <Text>{message.text}</Text>
+            </View>
+          );
+        }}
+      />
+    );
+  }
+
+  return <MessageSimple message={message} />;
+  /** Custom implementation */
 };

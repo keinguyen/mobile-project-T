@@ -1,21 +1,27 @@
 import apiErrorService from "@src/apis/api-error";
 
-const subjectKey = {
-  "tickets.api.getList": "GET",
-  "tickets.api.createTicket": "POST",
-  "tickets.api.google": "POST",
+export enum ERequestAPI {
+  GET_LIST = "tickets.api.getList",
+  CREATE_TICKET = "tickets.api.createTicket",
+  UPLOAD_ATTACHMENT_FILE = "attachments.api.uploadfiles",
+}
+
+const availableAPIs: Record<string, Array<ERequestAPI>> = {
+  GET: [ERequestAPI.GET_LIST],
+  POST: [ERequestAPI.CREATE_TICKET, ERequestAPI.UPLOAD_ATTACHMENT_FILE],
 };
 
 export const requestAPI = async <T>(params: {
   body?: T;
   isUploadFile?: boolean;
-  subject: keyof typeof subjectKey;
+  subject: ERequestAPI;
 }) => {
   const { body, subject, isUploadFile } = params;
 
   const result = await fetch(
     new URL(
       `.netlify/functions/${subject.split(".")[0]}`,
+      // "http://192.168.1.11:8888/"
       "https://ephemeral-salmiakki-1ae238.netlify.app/"
     ),
     {
@@ -25,7 +31,7 @@ export const requestAPI = async <T>(params: {
           ? (body as unknown as Blob)
           : JSON.stringify(body)
         : undefined,
-      method: subjectKey[subject],
+      method: availableAPIs["GET"].includes(subject) ? "GET" : "POST",
       headers: {
         subject,
         "Content-Type": isUploadFile

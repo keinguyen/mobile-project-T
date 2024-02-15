@@ -4,6 +4,7 @@ import {
   CameraOptions,
   ImageLibraryOptions,
 } from "react-native-image-picker";
+import uuid from "react-native-uuid";
 
 interface SelectedAvatarForUpload {
   name: string;
@@ -33,12 +34,17 @@ const fileEmpty = {
 
 function makeFileService() {
   return {
-    async launchImageLibrary(): Promise<Blob | undefined> {
+    async launchImageLibrary(params: {
+      options?: ImageLibraryOptions;
+    }): Promise<Array<ImagePicker.Asset> | undefined> {
       try {
         const options: ImageLibraryOptions = {
-          selectionLimit: 1,
-          mediaType: "photo",
-          quality: 1,
+          ...{
+            selectionLimit: 2,
+            mediaType: "photo",
+            quality: 1,
+          },
+          ...params?.options,
         };
 
         const response = await ImagePicker.launchImageLibrary(options);
@@ -50,21 +56,20 @@ function makeFileService() {
           return undefined;
         }
 
-        const originFile: Asset = assets[0];
+        return assets.map((originFile) => {
+          const fileId = uuid.v4();
+          const fileBlob = {
+            id: fileId as string,
+            uri: originFile.uri,
+            name: originFile.fileName,
+            type: "application/octet-stream",
+          };
 
-        const fileBlob = {
-          uri: originFile.uri,
-          name: originFile.fileName,
-          type: "application/octet-stream",
-        } as unknown as Blob;
+          if (!originFile.uri || !originFile.fileSize)
+            throw new Error("UPLOAD_FILE_ERROR");
 
-        if (!originFile.uri || !originFile.fileSize)
-          throw new Error("UPLOAD_FILE_ERROR");
-
-        // const formData = new FormData();
-        // formData.append("file", fileBlob);
-
-        return fileBlob;
+          return fileBlob;
+        });
       } catch (error) {
         return undefined;
       }

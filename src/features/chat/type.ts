@@ -1,3 +1,9 @@
+export type AttachmentFile = {
+  fileId: string;
+  ticketId: string;
+  imageView: string;
+};
+
 export enum TicketStatus {
   WAITING = "WAITING",
   PENDING = "PENDING",
@@ -5,17 +11,17 @@ export enum TicketStatus {
 }
 
 export type Ticket = {
-  id?: string;
+  id: string;
   ts?: { isoString: string };
   createBy: string;
   title: string;
   desc: string;
   channelId: string;
-  price: number;
   patientInfo: {
     fisrtName: string;
     lastName: string;
     phoneNumber: string;
   };
   status: TicketStatus;
+  attachmentFiles?: AttachmentFile[];
 };

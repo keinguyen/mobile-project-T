@@ -60,7 +60,7 @@ function RootNavigator(): JSX.Element {
   });
 
   const stacks = useMemo(() => {
-    if (userProfile.username) {
+    if (userProfile?.username) {
       return {
         ["MainStacks"]: {
           screen: TabNavigation,
@@ -75,7 +75,7 @@ function RootNavigator(): JSX.Element {
         options: { headerShown: false },
       },
     };
-  }, [userProfile.username]);
+  }, [userProfile?.username]);
 
   useInitializeApp(!!userProfile);
   useNotification();

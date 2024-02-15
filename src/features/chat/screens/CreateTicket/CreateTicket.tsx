@@ -1,4 +1,4 @@
-import { requestAPI } from "@src/apis/requestAPI";
+import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
 import {
   Box,
   Button,
@@ -7,25 +7,25 @@ import {
   TextField,
   View,
 } from "@src/components";
-import AnimatedSplashScreen from "@src/components/AnimatedSplashScreen/AnimatedSplashScreen";
 import Icon from "@src/components/Icon";
-import { TicketStackParamList } from "@src/features/chat";
+import { ChatStreamProvider, TicketStackParamList } from "@src/features/chat";
 import streamChatServices from "@src/features/chat/services/stream-chat.services";
 import { FileService } from "@src/features/chat/services/upload-file.services";
 import { Ticket, TicketStatus } from "@src/features/chat/type";
 import { ScreenProps } from "@src/navigation/types";
 import { actions } from "@src/store/redux";
-import AnimatedLottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Image, Keyboard, ScrollView } from "react-native";
-import { ZoomOut } from "react-native-reanimated";
+import { TouchableOpacity } from "react-native";
+import { Alert, FlatList, Image, Keyboard, ScrollView } from "react-native";
+import { Asset } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
+import FileViewer from "react-native-file-viewer";
+import uuid from "react-native-uuid";
 
 interface FormValues {
   title: string;
   descriptions: string;
-  price: string;
   patientInfo: {
     fisrtName: string;
     lastName: string;
@@ -39,21 +39,29 @@ export const CreateTicket: React.FC<
   const dispatch = useDispatch();
   const formData = useRef<FormData>();
   const [isLoading, setIsLoading] = useState(false);
+  const [attachmentFiles, setAttachmentFiles] = useState<
+    Array<Asset> | undefined
+  >(undefined);
   const {
     control,
-    handleSubmit,
     formState: { isValid },
     getValues,
   } = useForm<FormValues>({
     defaultValues: {
-      title: undefined,
-      descriptions: undefined,
+      title: "Honda SH150i",
+      descriptions: "Like new",
       patientInfo: {
-        fisrtName: undefined,
-        lastName: undefined,
-        phoneNumber: undefined,
+        fisrtName: "Nguyen",
+        lastName: "Van B",
+        phoneNumber: "0355732994",
       },
-      price: undefined,
+      // title: undefined,
+      // descriptions: undefined,
+      // patientInfo: {
+      //   fisrtName: undefined,
+      //   lastName: undefined,
+      //   phoneNumber: undefined,
+      // },
     },
   });
 
@@ -70,38 +78,38 @@ export const CreateTicket: React.FC<
         return;
       }
 
-      const { title, price, patientInfo, descriptions } = values;
-
-      const channelId = (Math.random() + 1).toString(36).substring(7);
+      const { title, patientInfo, descriptions } = values;
+      const channelId = uuid.v4() as string;
       const id = await streamChatServices.createChannel(title, channelId);
       if (id && channelId === id) {
         const data: Ticket = {
+          id: "",
           title,
           channelId,
           patientInfo,
           desc: descriptions,
           createBy: "Stack 1",
-          price: Number(price),
           status: TicketStatus.WAITING,
         };
-
-        const ticketId = await requestAPI<Ticket>({
-          subject: "tickets.api.createTicket",
+        const response = await requestAPI<Ticket>({
+          subject: ERequestAPI.CREATE_TICKET,
           body: data,
         });
 
-        if (ticketId) {
+        const ticketId = response?.ticketId;
+        if (ticketId && attachmentFiles?.length) {
           formData.current?.append("ticketId", ticketId);
-
+          attachmentFiles.forEach((e) => {
+            formData.current?.append("file", e as unknown as Blob);
+          });
           await requestAPI<FormData>({
-            subject: "tickets.api.google",
+            subject: ERequestAPI.UPLOAD_ATTACHMENT_FILE,
             body: formData.current,
             isUploadFile: true,
           });
-
-          dispatch(actions.ticket.upsertTicket(data));
-          navigation.goBack();
         }
+        dispatch(actions.ticket.upsertTicket(data));
+        navigation.goBack();
       }
     } catch (error) {
       console.log("Erorr: ", error);
@@ -112,7 +120,7 @@ export const CreateTicket: React.FC<
   };
 
   return (
-    <>
+    <ChatStreamProvider>
       <View flex={1} px={16} pt={16} pb={32}>
         <Text variant={"primary"} color={"grey500"} fontWeight={"500"}>
           {"Thông tin sản phẩm"}
@@ -294,62 +302,10 @@ export const CreateTicket: React.FC<
               name="patientInfo.phoneNumber"
             />
           </View>
-          <View>
-            <Controller
-              control={control}
-              rules={{
-                required: false,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <>
-                  <Box flexDirection={"row"} mb={"s"}>
-                    <Text
-                      variant={"secondary"}
-                      fontWeight={"500"}
-                      color={"grey500"}
-                      fontSize={12}
-                    >
-                      {"Giá mong muốn"}
-                    </Text>
-                  </Box>
-                  <TextField
-                    inputProps={{
-                      value: value,
-                      onBlur: onBlur,
-                      onChangeText: onChange,
-                      placeholder: "Giá mong muốn",
-                      keyboardType: "numeric",
-                    }}
-                  />
-                </>
-              )}
-              name="price"
-            />
-          </View>
-
-          <Box alignItems={"center"}>
-            <Button
-              variant="transparent"
-              onPress={async () => {
-                const res = await FileService.launchImageLibrary();
-                res && formData.current?.append("file", res);
-              }}
-              padding={"s"}
-            >
-              <Box
-                flexDirection={"row"}
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
-                <Text variant={"secondary"} color={"grey500"} fontSize={12}>
-                  Tải hình sản phẩm
-                </Text>
-                <View mr={12} />
-                <Icon name="Upload" color="grey300" />
-              </Box>
-            </Button>
-          </Box>
+          <UploadAttachmentFiles
+            attachmentFiles={attachmentFiles || []}
+            setAttachmentFiles={setAttachmentFiles}
+          />
         </ScrollView>
         <Button
           label="Tạo"
@@ -369,15 +325,107 @@ export const CreateTicket: React.FC<
         />
       </View>
 
-      {isLoading ? (
+      {isLoading && (
         <LottieView
           source={require("@src/assets/animations/loading.json")}
           autoPlay
           backgroundColor={"white"}
         />
-      ) : (
-        <></>
       )}
-    </>
+    </ChatStreamProvider>
+  );
+};
+
+const UploadAttachmentFiles = (params: {
+  attachmentFiles: Asset[];
+  setAttachmentFiles: (value: Asset[]) => void;
+}) => {
+  const { attachmentFiles, setAttachmentFiles } = params;
+
+  const onRemove = (fileId: string) => {
+    const result = attachmentFiles.filter((e) => e.id !== fileId);
+    setAttachmentFiles([...result]);
+  };
+
+  const onPreView = (fileId: string) => {
+    const result = attachmentFiles.find((e) => e.id === fileId);
+    if (!result?.uri) return;
+    FileViewer.open(result?.uri, {
+      showOpenWithDialog: true,
+    });
+  };
+
+  return (
+    <View flex={1}>
+      <View flex={1} flexDirection="row">
+        <FlatList<Asset>
+          data={attachmentFiles || []}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item, index) => `${item?.id}-${index}`}
+          ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+          renderItem={({ item, index }) => (
+            <View
+              p={8}
+              key={index}
+              flexDirection="row"
+              border={1}
+              align="center"
+              borderRadius="small"
+            >
+              <View flex={1}>
+                <TouchableOpacity onPress={() => item.id && onPreView(item.id)}>
+                  <Image
+                    source={{ uri: item.uri }}
+                    height={40}
+                    width={40}
+                    style={{ borderRadius: 16 }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity onPress={() => item.id && onRemove(item.id)}>
+                <View align="center" flexDirection="row">
+                  <Text>Xóa ảnh</Text>
+                  <View w={8} />
+                  <Icon name="Trash2" color="grey300" />
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      </View>
+      {(attachmentFiles || []).length !== 5 && (
+        <View align="center">
+          <Button
+            variant="transparent"
+            onPress={async () => {
+              const res = await FileService.launchImageLibrary({
+                options: {
+                  mediaType: "photo",
+                  selectionLimit: attachmentFiles?.length
+                    ? 5 - attachmentFiles.length
+                    : 5,
+                },
+              });
+              res?.length &&
+                setAttachmentFiles((attachmentFiles || []).concat(...res));
+            }}
+            padding={"s"}
+          >
+            <View flexDirection="row" align="center">
+              <Text
+                textAlign="center"
+                variant={"secondary"}
+                color={"grey500"}
+                fontSize={12}
+              >
+                Tải hình sản phẩm
+              </Text>
+              <View mr={12} />
+              <Icon name="Upload" color="grey300" />
+            </View>
+          </Button>
+        </View>
+      )}
+    </View>
   );
 };

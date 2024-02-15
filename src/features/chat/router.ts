@@ -62,6 +62,6 @@ export type TicketStackParamList = {
     token: string;
     streamName: string;
   };
-  [screens.TicketDetail]: { channelId: string };
+  [screens.TicketDetail]: { ticketId: string };
   [screens.ChannelChat]: { channelId: string };
 };

@@ -7,11 +7,6 @@ export const ChatStreamProvider = (props: PropsWithChildren<{}>) => {
   const { children } = props;
   useChatListener();
 
-  console.log(
-    "****** streamChatServices.client ******",
-    streamChatServices.client
-  );
-
   return (
     <OverlayProvider
       value={{

@@ -1,4 +1,4 @@
-import { requestAPI } from "@src/apis/requestAPI";
+import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
 import { Box, Button, Text, View } from "@src/components";
 import { screens } from "@src/features/chat";
 import { Ticket } from "@src/features/chat/type";
@@ -19,7 +19,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
     "fetchTickets",
     async () => {
       const result = await requestAPI<Array<Ticket>>({
-        subject: "tickets.api.getList",
+        subject: ERequestAPI.GET_LIST,
       });
 
       dispatch(actions.ticket.setAllTickets(result));
@@ -31,8 +31,8 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
     }
   );
 
-  const onTicketDetails = (channelId: string) => {
-    navigation.navigate(screens.TicketDetail, { channelId });
+  const onTicketDetails = (ticketId: string) => {
+    navigation.navigate(screens.TicketDetail, { ticketId });
   };
 
   const getStatus = (
@@ -69,7 +69,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
         contentContainerStyle={styles.contentContainer}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item, index }) => (
-          <TouchableOpacity onPress={() => onTicketDetails(item.channelId)}>
+          <TouchableOpacity onPress={() => onTicketDetails(item.id)}>
             <View p={12} border={1} borderRadius="small">
               <Text variant={"primary"} color={"grey400"} fontWeight={"500"}>
                 #{index + 1} {item?.title.toUpperCase()}

@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import { Box, Button, ExploreHeaderTitle, Text } from "@src/components";
-import { ExploreProps } from "./Explore.type";
 import { useScrollToTop } from "@react-navigation/native";
-import MillicastWidgetPublisher from "./MillicastWidgetPublisher";
-import MillicastWidgetViewer from "./MillicastWidgetViewer";
-import axios from "axios";
-import { generateRandomString } from "@src/utils/random-string";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
+import { ExploreHeaderTitle, Text, View } from "@src/components";
 import { TicketScreen } from "@src/features/chat/screens/Ticket";
+import { generateRandomString } from "@src/utils/random-string";
+import axios from "axios";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ExploreProps } from "./Explore.type";
 
 export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
   const ref = React.useRef(null);
@@ -45,15 +43,15 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <ExploreHeaderTitle navigation={navigation} />
 
-      <Box bg={"white"} height={"100%"} width={"100%"} pt={"l"} px={"m"}>
+      <View flex={1} px={16}>
         <Text variant={"secondary"} fontWeight={"500"}>
           Danh sách yêu cầu:
         </Text>
         <TicketScreen navigation={navigation} />
-      </Box>
+      </View>
     </SafeAreaView>
   );
 };

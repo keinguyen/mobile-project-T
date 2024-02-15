@@ -10,6 +10,33 @@ PODS:
     - React-Core (= 0.73.3)
     - React-jsi (= 0.73.3)
     - ReactCommon/turbomodule/core (= 0.73.3)
+  - Firebase/CoreOnly (10.20.0):
+    - FirebaseCore (= 10.20.0)
+  - Firebase/Messaging (10.20.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 10.20.0)
+  - FirebaseCore (10.20.0):
+    - FirebaseCoreInternal (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.20.0):
+    - FirebaseCore (~> 10.0)
+  - FirebaseCoreInternal (10.21.0):
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseInstallations (10.21.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - PromisesObjC (~> 2.1)
+  - FirebaseMessaging (10.20.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleDataTransport (~> 9.3)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/Reachability (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
   - Flipper (0.201.0):
     - Flipper-Folly (~> 2.6)
   - Flipper-Boost-iOSX (1.76.0.1.11)
@@ -68,6 +95,43 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
+  - GoogleDataTransport (9.3.0):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities (7.12.0):
+    - GoogleUtilities/AppDelegateSwizzler (= 7.12.0)
+    - GoogleUtilities/Environment (= 7.12.0)
+    - GoogleUtilities/ISASwizzler (= 7.12.0)
+    - GoogleUtilities/Logger (= 7.12.0)
+    - GoogleUtilities/MethodSwizzler (= 7.12.0)
+    - GoogleUtilities/Network (= 7.12.0)
+    - "GoogleUtilities/NSData+zlib (= 7.12.0)"
+    - GoogleUtilities/Reachability (= 7.12.0)
+    - GoogleUtilities/SwizzlerTestHelpers (= 7.12.0)
+    - GoogleUtilities/UserDefaults (= 7.12.0)
+  - GoogleUtilities/AppDelegateSwizzler (7.12.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (7.12.0):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/ISASwizzler (7.12.0)
+  - GoogleUtilities/Logger (7.12.0):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (7.12.0):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (7.12.0):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.12.0)"
+  - GoogleUtilities/Reachability (7.12.0):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/SwizzlerTestHelpers (7.12.0):
+    - GoogleUtilities/MethodSwizzler
+  - GoogleUtilities/UserDefaults (7.12.0):
+    - GoogleUtilities/Logger
   - hermes-engine (0.73.3):
     - hermes-engine/Pre-built (= 0.73.3)
   - hermes-engine/Pre-built (0.73.3)
@@ -77,7 +141,13 @@ PODS:
   - lottie-react-native (5.1.6):
     - lottie-ios (~> 3.4.0)
     - React-Core
+  - nanopb (2.30909.1):
+    - nanopb/decode (= 2.30909.1)
+    - nanopb/encode (= 2.30909.1)
+  - nanopb/decode (2.30909.1)
+  - nanopb/encode (2.30909.1)
   - OpenSSL-Universal (1.1.1100)
+  - PromisesObjC (2.3.1)
   - RCT-Folly (2022.05.16.00):
     - boost
     - DoubleConversion
@@ -955,6 +1025,10 @@ PODS:
     - React-Core
   - react-native-document-picker (9.1.0):
     - React-Core
+  - react-native-image-picker (7.1.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
+    - React-Core
   - react-native-image-resizer (1.4.5):
     - React-Core
   - react-native-maps (1.10.0):
@@ -1156,6 +1230,16 @@ PODS:
     - React-Core
   - RNDateTimePicker (7.6.2):
     - React-Core
+  - RNFBApp (18.8.0):
+    - Firebase/CoreOnly (= 10.20.0)
+    - React-Core
+  - RNFBMessaging (18.8.0):
+    - Firebase/Messaging (= 10.20.0)
+    - FirebaseCoreExtension (= 10.20.0)
+    - React-Core
+    - RNFBApp
+  - RNFileViewer (2.1.5):
+    - React-Core
   - RNFS (2.20.0):
     - React-Core
   - RNGestureHandler (2.14.1):
@@ -1199,6 +1283,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
+  - FirebaseCoreInternal
   - Flipper (= 0.201.0)
   - Flipper-Boost-iOSX (= 1.76.0.1.11)
   - Flipper-DoubleConversion (= 3.2.0.1)
@@ -1220,6 +1305,7 @@ DEPENDENCIES:
   - FlipperKit/FlipperKitUserDefaultsPlugin (= 0.201.0)
   - FlipperKit/SKIOSNetworkPlugin (= 0.201.0)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - GoogleUtilities
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
@@ -1250,6 +1336,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
@@ -1283,6 +1370,9 @@ DEPENDENCIES:
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
+  - RNFileViewer (from `../node_modules/react-native-file-viewer`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
@@ -1297,6 +1387,12 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - CocoaAsyncSocket
+    - Firebase
+    - FirebaseCore
+    - FirebaseCoreExtension
+    - FirebaseCoreInternal
+    - FirebaseInstallations
+    - FirebaseMessaging
     - Flipper
     - Flipper-Boost-iOSX
     - Flipper-DoubleConversion
@@ -1306,10 +1402,14 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - FlipperKit
     - fmt
+    - GoogleDataTransport
+    - GoogleUtilities
     - JitsiWebRTC
     - libevent
     - lottie-ios
+    - nanopb
     - OpenSSL-Universal
+    - PromisesObjC
     - SocketRocket
     - TOCropViewController
 
@@ -1375,6 +1475,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
     :path: "../node_modules/react-native-image-resizer"
   react-native-maps:
@@ -1441,6 +1543,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-masked-view/masked-view"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
+  RNFBApp:
+    :path: "../node_modules/@react-native-firebase/app"
+  RNFBMessaging:
+    :path: "../node_modules/@react-native-firebase/messaging"
+  RNFileViewer:
+    :path: "../node_modules/react-native-file-viewer"
   RNFS:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
@@ -1468,6 +1576,12 @@ SPEC CHECKSUMS:
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: 70590b4f9e8ae9b0ce076efacea3abd7bc585ace
   FBReactNativeSpec: e47ea8c8f044c25e41a4fa5e8b7ff3923d3e0a94
+  Firebase: 10c8cb12fb7ad2ae0c09ffc86cd9c1ab392a0031
+  FirebaseCore: 28045c1560a2600d284b9c45a904fe322dc890b6
+  FirebaseCoreExtension: 0659f035b88c5a7a15a9763c48c2e6ca8c0a2977
+  FirebaseCoreInternal: 43c1788eaeee9d1b97caaa751af567ce11010d00
+  FirebaseInstallations: 390ea1d10a4d02b20c965cbfd527ee9b3b412acb
+  FirebaseMessaging: 06c414a21b122396a26847c523d5c370f8325df5
   Flipper: c7a0093234c4bdd456e363f2f19b2e4b27652d44
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
   Flipper-DoubleConversion: 2dc99b02f658daf147069aad9dbd29d8feb06d30
@@ -1478,12 +1592,16 @@ SPEC CHECKSUMS:
   FlipperKit: 37525a5d056ef9b93d1578e04bc3ea1de940094f
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 035f1e36e53b355cf70f6434d161b36e7d21fecd
+  GoogleDataTransport: 57c22343ab29bc686febbf7cbb13bad167c2d8fe
+  GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   hermes-engine: 5420539d016f368cd27e008f65f777abd6098c56
   JitsiWebRTC: 3a41671ef65a51d7204323814b055a2690b921c7
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   lottie-ios: 8f97d3271e155c2d688875c29cd3c74908aef5f8
   lottie-react-native: 8f9d4be452e23f6e5ca0fdc11669dc99ab52be81
+  nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
+  PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
   RCTRequired: 9b898847f76977a6dfed2a08f4c5ed37add75ec0
   RCTTypeSafety: 0debdc4ba38c8138016d8d8ada4bdf9ec1b8aa82
@@ -1507,6 +1625,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: d59258be3b0d2280c6ba8964ab6e36ec69211871
   react-native-cameraroll: 3301d62d45616ee9da55ceed04be8d788c3de3ef
   react-native-document-picker: b4f4a23b73f864ce17965b284c0757648993805b
+  react-native-image-picker: 6c51359eca7a7df9f07e297218c25696eb9da976
   react-native-image-resizer: d9fb629a867335bdc13230ac2a58702bb8c8828f
   react-native-maps: b4c3b092b1c71240d8d4792bae3738828942f14a
   react-native-netinfo: 8a7fd3f7130ef4ad2fb4276d5c9f8d3f28d2df3d
@@ -1540,6 +1659,9 @@ SPEC CHECKSUMS:
   RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
   RNDateTimePicker: fc2e4f2795877d45e84d85659bebe627eba5c931
+  RNFBApp: 5810d39f89d38272f29d9908cb19ef641922c081
+  RNFBMessaging: 8863c0206cc1a5577678eac6c1ec2b2965bd8e52
+  RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 25b969a1ffc806b9f9ad2e170d4a3b049c6af85e
   RNImageCropPicker: d9616a0cb9b72e8551ff94a7a5021fbd29050aa5
@@ -1553,6 +1675,6 @@ SPEC CHECKSUMS:
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 08cd7601462818c4985bda7b205b9e6a92a7e66a
 
-PODFILE CHECKSUM: 129c546d065161a9b94d42e5e2ac70a49a500f0a
+PODFILE CHECKSUM: d74edb44cd5e816f4c6470c7bf23729490d3c95f
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

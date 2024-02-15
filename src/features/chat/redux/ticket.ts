@@ -12,7 +12,7 @@ interface TicketReducer {
 }
 
 const ticketAdapter = createEntityAdapter({
-  selectId: (ticket: Ticket) => ticket.channelId,
+  selectId: (ticket: Ticket) => ticket.id,
   sortComparer: (a, b) => a.title.localeCompare(b.title),
 });
 const ticketsInitialState = ticketAdapter.getInitialState();
@@ -38,18 +38,21 @@ const { name, actions, reducer } = createSlice({
 });
 
 /**=================== Selectors ====================== */
-type State = { [name: string]: TicketReducer };
+export type TicketState = { [name: string]: TicketReducer };
 
 const ticketSelectors = ticketAdapter.getSelectors(
-  (state: State) => state[name].tickets
+  (state: TicketState) => state[name].tickets
 );
 
 const selectors = {
-  ticketIds(state: State): string[] {
+  ticketIds(state: TicketState): string[] {
     return ticketSelectors.selectIds(state) as string[];
   },
-  tickets(state: State): Ticket[] {
+  tickets(state: TicketState): Ticket[] {
     return ticketSelectors.selectAll(state);
+  },
+  ticketById(state: TicketState, ticketId: string): Ticket {
+    return ticketSelectors.selectById(state, ticketId);
   },
 };
 

@@ -6,6 +6,7 @@ export enum ChatEvents {
 
 class StreamChatService {
   static _instance: StreamChatService;
+  private _connectedUser;
   private STREAM_CHAT_INSTANCE = "mnac4zfhsxbr";
 
   static getInstance() {
@@ -25,15 +26,17 @@ class StreamChatService {
       this._client = StreamChat.getInstance(this.STREAM_CHAT_INSTANCE);
     }
 
+    if (this._connectedUser) return;
+
     try {
-      const connectedUser = await this._client.connectUser(
+      this._connectedUser = await this._client.connectUser(
         {
           id: "demo1",
           name: "demo1",
         },
         chatToken
       );
-      if (connectedUser) {
+      if (this._connectedUser) {
         // TODO: handle connect completed
       } else {
         // TODO: handle error
