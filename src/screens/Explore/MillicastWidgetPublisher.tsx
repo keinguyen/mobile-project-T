@@ -1,5 +1,6 @@
 import { Director, Publish, PublishConnectOptions } from "@millicast/sdk";
 import { Box, Button, Text } from "@src/components";
+import { FadeInOverlay } from "@src/components/FadeInOverlay";
 import Icon from "@src/components/Icon";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
   props
 ) => {
   const { streamName, token, navigation } = props;
+  const [isLoading, setIsLoading] = useState(false);
   let millicastPublish: Publish;
   const [mediaStream, setMediaStream] = useState<MediaStream>();
   const [stream, setStream] = useState<MediaStream>();
@@ -21,6 +23,7 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
   const startLive = async () => {
     if (!mediaStream) {
       try {
+        setIsLoading(true);
         const userMedia = await mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280 },
@@ -31,24 +34,32 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
           audio: true,
         });
 
+        console.log("****** userMedia ******", userMedia);
+
         const tokenGenerator = () =>
           Director.getPublisher({
             token,
             streamName,
           });
+
         millicastPublish = new Publish(streamName, tokenGenerator);
-        console.log("****** millicastPublish ******", millicastPublish);
 
         setStream(userMedia);
         setMediaStream(userMedia);
+
         const broadcastOptions: PublishConnectOptions = {
           mediaStream: userMedia,
           codec: "vp8",
+          bandwidth: 0,
         };
+
+        setIsLoading(false);
 
         await millicastPublish.connect(broadcastOptions);
       } catch (error) {
         console.log("****** error ******", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -90,8 +101,6 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
         <Button
           variant={"transparent"}
           onPress={() => {
-            console.log("****** 111111 ******", 111111);
-
             navigation.goBack();
             stopLive();
           }}
@@ -109,6 +118,7 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
           objectFit="cover"
         />
       ) : null}
+      <FadeInOverlay visible={isLoading} />
     </Box>
   );
 };

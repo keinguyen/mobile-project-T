@@ -9,7 +9,13 @@ import { name as appName } from './app.json';
 
 import messaging from "@react-native-firebase/messaging";
 import { registerGlobals } from 'react-native-webrtc';
+import { Logger as MillicastLogger } from '@millicast/sdk'
+
 registerGlobals();
+
+window.Logger = MillicastLogger
+ 
+Logger.setLevel(MillicastLogger.DEBUG);
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('****** remoteMessage ******', remoteMessage);

@@ -1,4 +1,5 @@
 import { Box, Button, Text, View } from "@src/components";
+import { FadeInOverlay } from "@src/components/FadeInOverlay";
 import Icon from "@src/components/Icon";
 import {
   ChatStreamProvider,
@@ -48,6 +49,7 @@ const ChannelChatDetails: React.FC<
   const {
     params: { channelId },
   } = route;
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: channel } = useQuery(
     [channelId],
@@ -76,18 +78,15 @@ const ChannelChatDetails: React.FC<
 
   if (!channel) {
     return (
-      <Box flex={1} style={{ paddingVertical: 20 }}>
-        <ActivityIndicator
-          color={theme.colors.warning}
-          animating
-          size="large"
-        />
+      <Box flex={1} alignItems={"center"} justifyContent={"center"} px={"l"}>
+        <FadeInOverlay visible />
       </Box>
     );
   }
 
   const startStream = async () => {
     try {
+      setIsLoading(true);
       const dolby = await axios.get(
         `https://appraisal-hub.onrender.com/api/dolby/token/${generateRandomString(
           10
@@ -100,65 +99,70 @@ const ChannelChatDetails: React.FC<
       });
     } catch (error) {
       Alert.alert("Lỗi", "Không thực được");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Box flex={1}>
-      <Box
-        flexDirection={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        px={"s"}
-      >
-        <Button
-          variant={"transparent"}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <Icon name="ArrowLeft" />
-        </Button>
-        <Text fontWeight={"500"}>Phòng chat</Text>
-        <Button
-          variant={"transparent"}
-          onPress={() => {
-            startStream();
-          }}
-        >
-          <Icon name="PhoneCall" color="grey400" />
-        </Button>
-      </Box>
-
+    <>
       <Box flex={1}>
-        <Channel
-          giphyEnabled={false}
-          channel={channel}
-          keyboardVerticalOffset={0}
-          SendButton={SendMessagesButton}
-          CommandsButton={() => undefined}
+        <Box
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          px={"s"}
         >
-          <Box flex={1}>
-            <MessageList DateHeader={() => undefined} myMessageTheme={{}} />
-          </Box>
-          <Box style={{ paddingBottom: kbHeight }}>
-            <MessageInput
-              InputButtons={() => <AttachButton channelId={channelId} />}
-              additionalTextInputProps={{
-                placeholder: "Nhập tin nhắn",
-                placeholderTextColor: theme.colors.grey300,
-                style: [
-                  styles.messagesInput,
-                  Platform.OS === "android"
-                    ? styles.messagesInputForAndroid
-                    : styles.messagesInputForIOS,
-                ],
-              }}
-            />
-          </Box>
-        </Channel>
+          <Button
+            variant={"transparent"}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Icon name="ArrowLeft" />
+          </Button>
+          <Text fontWeight={"500"}>Phòng chat</Text>
+          <Button
+            variant={"transparent"}
+            onPress={() => {
+              startStream();
+            }}
+          >
+            <Icon name="PhoneCall" color="grey400" />
+          </Button>
+        </Box>
+
+        <Box flex={1}>
+          <Channel
+            giphyEnabled={false}
+            channel={channel}
+            keyboardVerticalOffset={0}
+            SendButton={SendMessagesButton}
+            CommandsButton={() => undefined}
+          >
+            <Box flex={1}>
+              <MessageList DateHeader={() => undefined} myMessageTheme={{}} />
+            </Box>
+            <Box style={{ paddingBottom: kbHeight }}>
+              <MessageInput
+                InputButtons={() => <AttachButton channelId={channelId} />}
+                additionalTextInputProps={{
+                  placeholder: "Nhập tin nhắn",
+                  placeholderTextColor: theme.colors.grey300,
+                  style: [
+                    styles.messagesInput,
+                    Platform.OS === "android"
+                      ? styles.messagesInputForAndroid
+                      : styles.messagesInputForIOS,
+                  ],
+                }}
+              />
+            </Box>
+          </Channel>
+        </Box>
+        <FadeInOverlay visible={isLoading} />
       </Box>
-    </Box>
+    </>
   );
 };
 
