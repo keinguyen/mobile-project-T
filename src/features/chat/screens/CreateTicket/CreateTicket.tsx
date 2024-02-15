@@ -22,6 +22,7 @@ import { Asset } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
 import FileViewer from "react-native-file-viewer";
 import uuid from "react-native-uuid";
+import { FadeInOverlay } from "@src/components/FadeInOverlay";
 
 interface FormValues {
   title: string;
@@ -325,13 +326,7 @@ export const CreateTicket: React.FC<
         />
       </View>
 
-      {isLoading && (
-        <LottieView
-          source={require("@src/assets/animations/loading.json")}
-          autoPlay
-          backgroundColor={"white"}
-        />
-      )}
+      <FadeInOverlay visible={isLoading} />
     </ChatStreamProvider>
   );
 };
