@@ -77,8 +77,8 @@ function RootNavigator(): JSX.Element {
     };
   }, [userProfile?.username]);
 
-  useInitializeApp(!!userProfile);
-  useNotification();
+  // useInitializeApp(!!userProfile);
+  // useNotification();
 
   return (
     <RootStack.Navigator screenOptions={rootOptions}>
