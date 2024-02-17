@@ -12,7 +12,10 @@ export const AuthenticationLayout = ({
 }: AuthenticationLayoutProps) => {
   const styles = useSafeAreaScrollViewStyles(true, true);
   return (
-    <ScrollView contentContainerStyle={[styles.contentContainer]}>
+    <ScrollView
+      contentContainerStyle={[styles.contentContainer]}
+      keyboardShouldPersistTaps={true}
+    >
       <Box marginTop="20%" marginBottom="m" flex={1}>
         <Box alignItems={"center"} px={"m"}>
           <Text fontWeight="bold" variant="largeHeader">

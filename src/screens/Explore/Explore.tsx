@@ -1,5 +1,4 @@
 import { useScrollToTop } from "@react-navigation/native";
-import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
 import { Button, ExploreHeaderTitle, Text, View } from "@src/components";
 import { TicketScreen } from "@src/features/chat/screens/Ticket";
 import { generateRandomString } from "@src/utils/random-string";
@@ -10,6 +9,9 @@ import RNFS from "react-native-fs";
 import RecordScreen from "react-native-record-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ExploreProps } from "./Explore.type";
+import RecordScreen from "react-native-record-screen";
+import RNFS from "react-native-fs";
+import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
 
 export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
   const ref = React.useRef(null);
@@ -76,23 +78,32 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
               const isExist = await RNFS.exists(outputURL);
               console.log("****** isExist ******", isExist);
 
-              if (isExist) {
-                const formData = new FormData();
-                formData.append("title", "Record Video 12345");
+              const fileContent = await RNFS.readFile(outputURL, "base64");
 
-                formData.append("files", {
-                  uri: outputURL,
-                  name: "Record Video",
-                  type: "application/octet-stream",
-                } as unknown as Blob);
+              const blob = await fetch(`file://${outputURL}`).then((res) =>
+                res.blob()
+              );
 
-                await requestAPI<FormData>({
-                  method: "POST",
-                  isUploadFile: true,
-                  body: formData,
-                  subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/12345678912323`,
-                });
-              }
+              console.log("****** blob ******", blob);
+
+              const formData = new FormData();
+
+              const x = new File([blob], "filename", {
+                type: "video/mp4",
+                lastModified: Date.now(),
+              });
+
+              console.log("****** 4 ******", 4);
+
+              formData.append("files", x);
+              console.log("******  ******", formData.getParts());
+
+              await requestAPI({
+                method: "POST",
+                isUploadFile: true,
+                body: formData,
+                subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/23213213`,
+              });
             } catch (error) {
               console.log("****** error ******", error);
             }

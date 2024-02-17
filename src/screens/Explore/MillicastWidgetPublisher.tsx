@@ -5,6 +5,7 @@ import Icon from "@src/components/Icon";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { MediaStream, RTCView, mediaDevices } from "react-native-webrtc";
+import RecordScreen from "react-native-record-screen";
 
 interface IMillicastWidgetPublisher {
   streamName: string;
@@ -94,6 +95,19 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
 
   return (
     <Box flex={1}>
+      <Button
+        label="Start recording"
+        onPress={async () => {
+          await RecordScreen.startRecording();
+        }}
+      />
+      <Button
+        label="Stop recording"
+        onPress={async () => {
+          const res = await RecordScreen.stopRecording();
+          console.log("****** res ******", res);
+        }}
+      />
       <Box
         flexDirection={"row"}
         alignItems={"center"}
