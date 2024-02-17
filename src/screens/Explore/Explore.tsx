@@ -1,4 +1,5 @@
 import { useScrollToTop } from "@react-navigation/native";
+import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
 import { Button, ExploreHeaderTitle, Text, View } from "@src/components";
 import { TicketScreen } from "@src/features/chat/screens/Ticket";
 import { generateRandomString } from "@src/utils/random-string";
@@ -78,32 +79,23 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
               const isExist = await RNFS.exists(outputURL);
               console.log("****** isExist ******", isExist);
 
-              const fileContent = await RNFS.readFile(outputURL, "base64");
+              if (isExist) {
+                const formData = new FormData();
+                formData.append("title", "Record Video 12345");
 
-              const blob = await fetch(`file://${outputURL}`).then((res) =>
-                res.blob()
-              );
+                formData.append("files", {
+                  uri: outputURL,
+                  name: "Record Video",
+                  type: "application/octet-stream",
+                } as unknown as Blob);
 
-              console.log("****** blob ******", blob);
-
-              const formData = new FormData();
-
-              const x = new File([blob], "filename", {
-                type: "video/mp4",
-                lastModified: Date.now(),
-              });
-
-              console.log("****** 4 ******", 4);
-
-              formData.append("files", x);
-              console.log("******  ******", formData.getParts());
-
-              await requestAPI({
-                method: "POST",
-                isUploadFile: true,
-                body: formData,
-                subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/23213213`,
-              });
+                await requestAPI<FormData>({
+                  method: "POST",
+                  isUploadFile: true,
+                  body: formData,
+                  subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/12345678912323`,
+                });
+              }
             } catch (error) {
               console.log("****** error ******", error);
             }
