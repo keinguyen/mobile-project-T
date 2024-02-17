@@ -1,10 +1,13 @@
 import { useScrollToTop } from "@react-navigation/native";
-import { ExploreHeaderTitle, Text, View } from "@src/components";
+import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
+import { Button, ExploreHeaderTitle, Text, View } from "@src/components";
 import { TicketScreen } from "@src/features/chat/screens/Ticket";
 import { generateRandomString } from "@src/utils/random-string";
 import axios from "axios";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
+import RNFS from "react-native-fs";
+import RecordScreen from "react-native-record-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ExploreProps } from "./Explore.type";
 
@@ -50,6 +53,51 @@ export const Explore: React.FC<ExploreProps> = ({ navigation }) => {
         <Text variant={"secondary"} fontWeight={"500"}>
           Danh sách yêu cầu:
         </Text>
+        <Button
+          label="Start recording"
+          onPress={async () => {
+            await RecordScreen.startRecording();
+          }}
+        />
+        <Button
+          label="Stop recording"
+          onPress={async () => {
+            try {
+              const res = (await RecordScreen.stopRecording()) as {
+                result: { outputURL: string };
+              };
+
+              console.log("****** res ******", res);
+
+              const outputURL = res?.result?.outputURL;
+
+              console.log("****** outputURL ******", outputURL);
+
+              const isExist = await RNFS.exists(outputURL);
+              console.log("****** isExist ******", isExist);
+
+              if (isExist) {
+                const formData = new FormData();
+                formData.append("title", "Record Video 12345");
+
+                formData.append("files", {
+                  uri: outputURL,
+                  name: "Record Video",
+                  type: "application/octet-stream",
+                } as unknown as Blob);
+
+                await requestAPI<FormData>({
+                  method: "POST",
+                  isUploadFile: true,
+                  body: formData,
+                  subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/12345678912323`,
+                });
+              }
+            } catch (error) {
+              console.log("****** error ******", error);
+            }
+          }}
+        />
         <TicketScreen navigation={navigation} />
       </View>
     </SafeAreaView>

@@ -18,7 +18,7 @@ export const requestAPI = async <T>(params: {
   const result = await fetch(
     new URL(
       subject,
-      isDev ? "http://localhost:6666/" : "https://appraisal-hub.onrender.com/"
+      isDev ? "http://localhost:5000/" : "https://appraisal-hub.onrender.com/"
     ),
     {
       mode: "cors",
