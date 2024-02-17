@@ -1,28 +1,24 @@
 import apiErrorService from "@src/apis/api-error";
 
 export enum ERequestAPI {
-  GET_LIST = "tickets.api.getList",
-  CREATE_TICKET = "tickets.api.createTicket",
-  UPLOAD_ATTACHMENT_FILE = "attachments.api.uploadfiles",
+  GET_LIST = "api/ticket/get",
+  CREATE_TICKET = "api/ticket/create",
+  UPLOAD_ATTACHMENT_FILE = "api/drive/upload",
 }
-
-const availableAPIs: Record<string, Array<ERequestAPI>> = {
-  GET: [ERequestAPI.GET_LIST],
-  POST: [ERequestAPI.CREATE_TICKET, ERequestAPI.UPLOAD_ATTACHMENT_FILE],
-};
 
 export const requestAPI = async <T>(params: {
   body?: T;
+  subject: string;
   isUploadFile?: boolean;
-  subject: ERequestAPI;
+  method: "GET" | "POST";
 }) => {
-  const { body, subject, isUploadFile } = params;
+  const isDev = false;
+  const { body, subject, method, isUploadFile } = params;
 
   const result = await fetch(
     new URL(
-      `.netlify/functions/${subject.split(".")[0]}`,
-      // "http://192.168.1.11:8888/"
-      "https://ephemeral-salmiakki-1ae238.netlify.app/"
+      subject,
+      isDev ? "http://localhost:6666/" : "https://appraisal-hub.onrender.com/"
     ),
     {
       mode: "cors",
@@ -31,9 +27,8 @@ export const requestAPI = async <T>(params: {
           ? (body as unknown as Blob)
           : JSON.stringify(body)
         : undefined,
-      method: availableAPIs["GET"].includes(subject) ? "GET" : "POST",
+      method,
       headers: {
-        subject,
         "Content-Type": isUploadFile
           ? "multipart/form-data"
           : "application/json",

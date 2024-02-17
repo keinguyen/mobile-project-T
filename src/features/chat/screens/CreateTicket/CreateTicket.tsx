@@ -93,20 +93,22 @@ export const CreateTicket: React.FC<
           status: TicketStatus.WAITING,
         };
         const response = await requestAPI<Ticket>({
+          method: "POST",
           subject: ERequestAPI.CREATE_TICKET,
           body: data,
         });
 
         const ticketId = response?.ticketId;
         if (ticketId && attachmentFiles?.length) {
-          formData.current?.append("ticketId", ticketId);
+          formData.current?.append("title", data.title);
           attachmentFiles.forEach((e) => {
-            formData.current?.append("file", e as unknown as Blob);
+            formData.current?.append("files", e as unknown as Blob);
           });
           await requestAPI<FormData>({
-            subject: ERequestAPI.UPLOAD_ATTACHMENT_FILE,
-            body: formData.current,
+            method: "POST",
             isUploadFile: true,
+            body: formData.current,
+            subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/${ticketId}`,
           });
         }
         dispatch(actions.ticket.upsertTicket(data));

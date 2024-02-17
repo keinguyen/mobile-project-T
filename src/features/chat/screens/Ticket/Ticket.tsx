@@ -19,6 +19,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
     "fetchTickets",
     async () => {
       const result = await requestAPI<Array<Ticket>>({
+        method: "GET",
         subject: ERequestAPI.GET_LIST,
       });
 
@@ -72,7 +73,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({ navigation }) => {
           <TouchableOpacity onPress={() => onTicketDetails(item.id)}>
             <View p={12} border={1} borderRadius="small">
               <Text variant={"primary"} color={"grey400"} fontWeight={"500"}>
-                #{index + 1} {item?.title.toUpperCase()}
+                #{index + 1} {item?.title?.toUpperCase()}
               </Text>
               <View mb={8}></View>
               <Text variant={"secondary"}>{item?.desc}</Text>
