@@ -200,3 +200,4 @@ export { default as HomeSelected } from "./HomeSelected";
 export { default as HomeNotSelected } from "./HomeNotSelected";
 export { default as PhoneCallNotSelected } from "./PhoneCallNotSelected";
 export { default as PhoneCallSelected } from "./PhoneCallSelected";
+export { default as PhoneCallEnded } from "./PhoneCallEnded";
