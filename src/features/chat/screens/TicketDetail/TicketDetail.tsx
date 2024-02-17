@@ -21,6 +21,7 @@ export const TicketDetail: React.FC<
   const onChat = () => {
     navigation.navigate(screens.ChannelChat, {
       channelId: ticketInfo.channelId,
+      ticketId,
     });
   };
 

@@ -47,7 +47,7 @@ const ChannelChatDetails: React.FC<
   ScreenProps<TicketStackParamList, "ChannelChat">
 > = ({ route, navigation }) => {
   const {
-    params: { channelId },
+    params: { channelId, ticketId },
   } = route;
   const [isLoading, setIsLoading] = useState(false);
 
@@ -96,6 +96,7 @@ const ChannelChatDetails: React.FC<
       navigation.navigate(screens.Call, {
         token: dolby.data.data.token,
         streamName: dolby.data.data.streams[0].streamName,
+        ticketId,
       });
     } catch (error) {
       Alert.alert("Lỗi", "Không thực được");

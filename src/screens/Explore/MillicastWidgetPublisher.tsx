@@ -9,12 +9,13 @@ import { MediaStream, RTCView, mediaDevices } from "react-native-webrtc";
 interface IMillicastWidgetPublisher {
   streamName: string;
   token: string;
+  ticketId: string;
 }
 
 const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
   props
 ) => {
-  const { streamName, token, navigation } = props;
+  const { streamName, token, ticketId, navigation } = props;
   const [isLoading, setIsLoading] = useState(false);
   let millicastPublish: Publish;
   const [mediaStream, setMediaStream] = useState<MediaStream>();
@@ -86,6 +87,7 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
       {
         streamName: streamName,
         accountId: "JZac6x",
+        ticketId,
       }
     );
   };

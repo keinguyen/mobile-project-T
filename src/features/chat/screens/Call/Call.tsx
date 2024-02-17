@@ -10,7 +10,7 @@ export const Call: React.FC<ScreenProps<TicketStackParamList, "Call">> = ({
   navigation,
 }) => {
   const {
-    params: { streamName, token },
+    params: { streamName, token, ticketId },
   } = route;
 
   return (
@@ -18,6 +18,7 @@ export const Call: React.FC<ScreenProps<TicketStackParamList, "Call">> = ({
       <MillicastWidgetPublisher
         streamName={streamName}
         token={token}
+        ticketId={ticketId}
         navigation={navigation}
       />
     </SafeAreaProvider>
