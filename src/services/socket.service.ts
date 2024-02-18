@@ -1,13 +1,13 @@
-import { io, Socket } from 'socket.io-client';
-import { ClientToServerEvents } from '../models/event';
+import { io, Socket } from "socket.io-client";
+import { ClientToServerEvents, ServerToClientEvents } from "../models/event";
 
 class SocketService {
   private readonly socket: Socket<ClientToServerEvents> = io(
-    `ws://192.168.1.2:5000`,
+    `wss://appraisal-hub.onrender.com`,
     {
       autoConnect: true,
-      transports: ['websocket'],
-    },
+      transports: ["websocket"],
+    }
   );
 
   disconnect() {
@@ -15,10 +15,13 @@ class SocketService {
   }
 
   joinConversation(roomId: number) {
-    console.log('******  this.socket ******', this.socket.id);
-    console.log('******  this.socket ******', this.socket.connected);
+    this.socket.emit("joinConversation", roomId);
+  }
 
-    this.socket.emit('joinConversation', roomId);
+  subscribeToAcceptConversation(
+    acceptConversationHandler: ServerToClientEvents["acceptConversation"]
+  ) {
+    this.socket.on("acceptConversation", acceptConversationHandler);
   }
 }
 

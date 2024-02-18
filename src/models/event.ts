@@ -1,7 +1,16 @@
 export interface ServerToClientEvents {
-  // joinConversation: (name: string) => void;
+  acceptConversation: (
+    streamName: string,
+    accountId: string,
+    ticketId: string
+  ) => void;
 }
 
 export interface ClientToServerEvents {
   joinConversation: (roomId: number) => void;
+  acceptConversation: (
+    streamName: string,
+    accountId: string,
+    ticketId: string
+  ) => void;
 }
