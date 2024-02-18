@@ -28,6 +28,17 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
   const [stream, setStream] = useState<MediaStream>();
   const { seconds, startCountdown, stopCountdown } = useCountdownTimer(60);
   const [isCalling, setIsCalling] = useState(false);
+  const [startedRecording, setStartedRecording] = useState(false);
+
+  function formatDate(timestamp) {
+    const date = new Date(timestamp);
+
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Note: Month is zero-based
+    const year = date.getFullYear();
+
+    return `${day}_${month}_${year}`;
+  }
 
   const startLive = async () => {
     if (!mediaStream) {
@@ -112,18 +123,18 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
 
   const handleUploadVideo = async () => {
     try {
-      const recordingResponse = (await RecordScreen.stopRecording()) as {
-        result: { outputURL: string };
-      };
+      const recordingResponse = await RecordScreen.stopRecording();
       const videoUrl = recordingResponse?.result?.outputURL;
+
       const isVideoExisting = await RNFS.exists(videoUrl);
 
       if (isVideoExisting) {
         const formData = new FormData();
+
         formData.append("title", `video-${ticketId}`);
         formData.append("files", {
           uri: Platform.OS === "android" ? `file://${videoUrl}` : videoUrl,
-          name: "Record Video",
+          name: `record_video_${formatDate(Date.now())}.mp4`,
           type: "application/octet-stream",
         } as unknown as Blob);
 
@@ -133,6 +144,11 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
           body: formData,
           subject: `${ERequestAPI.UPLOAD_ATTACHMENT_FILE}/${ticketId}`,
         });
+
+        await RNFS.unlink(videoUrl);
+      } else {
+        setIsLoading(false);
+        Alert.alert("Lỗi", "Gửi video không thành công");
       }
     } catch (error) {
       Alert.alert("Lỗi", "Gửi video không thành công");
@@ -159,10 +175,6 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
         setIsCalling(false);
         stopCountdown();
         startLive();
-        RecordScreen.startRecording({
-          bitrate: 3000000,
-          fps: 30,
-        }).then();
       }
     });
   }, []);
@@ -172,13 +184,18 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
       setIsLoading(true);
       await stopLive();
       await endConversation();
-      await handleUploadVideo();
+      startedRecording && (await handleUploadVideo());
       navigation.goBack();
     } catch (error) {
       console.log("****** error ******", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRecording = async () => {
+    const res = await RecordScreen.startRecording();
+    setStartedRecording(res === "started");
   };
 
   return (
@@ -189,14 +206,7 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
         justifyContent={"space-between"}
         px={"s"}
       >
-        <Button
-          variant={"transparent"}
-          onPress={async () => {
-            navigation.goBack();
-            stopLive();
-            await endConversation();
-          }}
-        >
+        <Button variant={"transparent"} onPress={handleEndCall}>
           <Icon name="ArrowLeft" />
         </Button>
         <Text fontWeight={"500"}>Quay phim sản phẩm</Text>
@@ -215,16 +225,35 @@ const MillicastWidgetPublisher: React.FC<IMillicastWidgetPublisher> = (
             bottom={"15%"}
             width={"100%"}
             alignItems={"center"}
+            justifyContent={"center"}
+            flexDirection={"row"}
           >
-            <Box
-              width={50}
-              height={50}
-              bg={"red500"}
-              borderRadius={"xxl"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              position={"absolute"}
-            >
+            {Platform.Version < "33" ? (
+              <Box
+                width={50}
+                height={50}
+                borderRadius={"xxl"}
+                borderColor={"accent"}
+                borderWidth={1}
+                mr={"s"}
+              >
+                <Button
+                  onPress={handleRecording}
+                  isFullWidth={true}
+                  width={50}
+                  height={50}
+                  variant={"transparent"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <Icon name="UploadCloud" color="accent" />
+                </Button>
+              </Box>
+            ) : (
+              <></>
+            )}
+
+            <Box width={50} height={50} bg={"red500"} borderRadius={"xxl"}>
               <Button
                 onPress={handleEndCall}
                 isFullWidth={true}
