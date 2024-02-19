@@ -1,11 +1,8 @@
 import { useScrollToTop } from "@react-navigation/native";
-import { ERequestAPI, requestAPI } from "@src/apis/requestAPI";
-import { Button, ExploreHeaderTitle, Text, View } from "@src/components";
+import { ExploreHeaderTitle, Text, View } from "@src/components";
 import { TicketScreen } from "@src/features/chat/screens/Ticket";
-import { generateRandomString } from "@src/utils/random-string";
-import axios from "axios";
-import React, { useState } from "react";
-import { Platform, StyleSheet } from "react-native";
+import React from "react";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ExploreProps } from "./Explore.type";
 

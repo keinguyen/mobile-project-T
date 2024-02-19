@@ -1,4 +1,4 @@
-import { Box, Button, Text, View } from "@src/components";
+import { Box, Button, Text } from "@src/components";
 import { FadeInOverlay } from "@src/components/FadeInOverlay";
 import Icon from "@src/components/Icon";
 import {
@@ -7,6 +7,7 @@ import {
   screens,
 } from "@src/features/chat";
 import styles from "@src/features/chat/screens/ChannelChat/ChannelChat.style";
+import { CustomMessagesText } from "@src/features/chat/screens/ChannelChat/components/CustomMessages";
 import streamChatServices from "@src/features/chat/services/stream-chat.services";
 import { FileService } from "@src/features/chat/services/upload-file.services";
 import { useKeyboardEffect } from "@src/hooks/useKeyboardEffect";
@@ -15,20 +16,13 @@ import { theme } from "@src/theme";
 import { generateRandomString } from "@src/utils/random-string";
 import axios from "axios";
 import React, { useCallback, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Platform,
-  TouchableOpacity,
-} from "react-native";
+import { Alert, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "react-query";
 import {
   Channel,
   MessageInput,
   MessageList,
-  MessageSimple,
-  useMessageContext,
   useMessageInputContext,
 } from "stream-chat-react-native";
 export const ChannelChat: React.FC<
@@ -140,6 +134,7 @@ const ChannelChatDetails: React.FC<
             keyboardVerticalOffset={0}
             SendButton={SendMessagesButton}
             CommandsButton={() => undefined}
+            MessageText={CustomMessagesText}
           >
             <Box flex={1}>
               <MessageList DateHeader={() => undefined} myMessageTheme={{}} />
@@ -195,8 +190,6 @@ const AttachButton: React.FC<{ channelId: string }> = ({ channelId }) => {
         formData?.append("file", e);
       });
     }
-
-    await streamChatServices.sendMessage(channelId, "text");
   };
 
   return (
@@ -206,26 +199,4 @@ const AttachButton: React.FC<{ channelId: string }> = ({ channelId }) => {
       </TouchableOpacity>
     </Box>
   );
-};
-
-const CustomMessageUIComponent = () => {
-  const { message } = useMessageContext();
-
-  if (message.text?.includes("https:")) {
-    return (
-      <MessageSimple
-        message={message}
-        MessageContent={() => {
-          return (
-            <View>
-              <Text>{message.text}</Text>
-            </View>
-          );
-        }}
-      />
-    );
-  }
-
-  return <MessageSimple message={message} />;
-  /** Custom implementation */
 };
